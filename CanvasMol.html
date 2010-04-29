@@ -14,19 +14,19 @@ href="CanvasMol-filer/canvasmol.css">
     
     <style type="text/css">
         .rot {
-            -webkit-animation: rot 3s 4 linear;
+            /*-webkit-animation: rot 3s 4 linear;*/
             -webkit-transform-style: preserve-3d;
             -webkit-transform-origin: 0.5 0.5;
             /*background: #00f;*/
             position: absolute;
-            width: 400px;
-            height: 400px;
+            top: 100px;
+            left: 100px;
+        
         }
         
         .rot > div {
             position: absolute;
-            top: 400px;
-            left: 400px;
+
         }
         
         
@@ -40,8 +40,9 @@ href="CanvasMol-filer/canvasmol.css">
             width: 20px; 
             height: 20px; 
             -webkit-border-radius: 10px; 
-            background: #f00;
+            background: inherit;
             -webkit-transform-style: preserve-3d;
+            background-image: -webkit-gradient( radial, 10 10, 10, 0 0, 5, from(rgba(0,0,0,0.2)), to(rgba(255,255,255,0.5)) ); 
         }
         
         .atom div:nth-child(1) {
@@ -67,6 +68,129 @@ href="CanvasMol-filer/canvasmol.css">
         }
 
     </style>
+    
+    
+    <style type="text/css">
+    
+    * {
+        position: absolute;
+    }
+    
+    .rotate {
+        /*-webkit-animation: rotate 2s 1 linear;*/
+        -webkit-transform-origin: 0 0;
+        -webkit-transform-style: preserve-3d;
+        position: absolute;
+        left: 100px;
+        top: 100px;
+    }
+    
+    /*.wrapper {
+        
+        -webkit-transform: translate3d(100px, 100px, 0px) rotateX(60deg) rotateZ(20deg);
+        -webkit-transform-origin: 0 0;
+        -webkit-transform-style: preserve-3d;
+    }*/
+    
+    @-webkit-keyframes rotate {
+            from {
+                -webkit-transform: rotateY(0);
+            }
+            to {
+                -webkit-transform: rotateY(360deg);
+            }
+        }
+    
+    /*.wrapper div {
+        position: absolute;
+        -webkit-transform-origin: 0 0;
+    }*/
+    
+    .p1, .p2 {
+        width: 10px;
+        height: 10px;
+        -webkit-border-radius: 5px;
+        position: absolute;
+        top: -5px;
+        left: -5px;
+    }
+    
+    .p1 {
+        background: green;
+        -webkit-transform: translate3d(0px, 0px, 0px);
+    }
+    
+    .p2 {
+        background: red;
+        -webkit-transform: translate3d(72px, 32px, 147px);
+    }
+    
+    .line {
+        height: 3px;
+        background: orange;
+        -webkit-transform-origin: 0 0;
+    }
+    
+    .line:nth-child(2){
+        -webkit-transform: rotateX(90deg);
+    }
+    
+    .lineX {
+        
+        -webkit-transform-origin: 0 0;
+        -webkit-transform: rotateX(0deg);
+        -webkit-transform-style: preserve-3d;
+    }
+    
+    .lineY {
+        
+        -webkit-transform-origin: 0 0;
+        /*-webkit-transform: rotateY(-1.078rad);*/
+        -webkit-transform-style: preserve-3d;
+    }
+    
+    .lineZ {
+        
+        -webkit-transform-origin: 0 0;
+        /*-webkit-transform: rotateZ(23.96deg);*/
+        -webkit-transform-style: preserve-3d;
+    }
+    
+    .lineWrapper {
+        -webkit-transform-style: preserve-3d;
+        /*-webkit-transform: translate3d(50px, 50px, 50px);*/
+    }
+    
+    .axis {
+        color: #fff;
+        text-align: right;
+        font-size: 2em;
+    }
+    
+    .x {
+        width: 100px;
+        height: 5px;
+        background: yellow;
+    }
+    
+    .y {
+        width: 100px;
+        height: 5px;
+        background: purple;
+        -webkit-transform-origin: 0 0;
+        -webkit-transform: rotateZ(90deg);
+        color: #fff;
+    }
+    
+    .z {
+        width: 100px;
+        height: 5px;
+        background: pink;
+        -webkit-transform-origin: 0 0;
+        -webkit-transform: rotateY(-90deg);
+        color: #fff;
+    }
+</style>
 </head><body>
 
 <!--div id="header">
@@ -328,159 +452,132 @@ iPad.
 
 <div class="shadow widget drag ui-draggable" id="log"></div-->
 
-<style type="text/css">
-    
-    * {
-        position: absolute;
-    }
-    
-    .rotate {
-        /*-webkit-animation: rotate 2s 1 linear;*/
-        -webkit-transform-origin: 0 0;
-        -webkit-transform-style: preserve-3d;
-        position: absolute;
-        left: 100px;
-        top: 100px;
-    }
-    
-    .wrapper {
-        
-        -webkit-transform: translate3d(100px, 100px, 0px) rotateX(60deg) rotateZ(20deg);
-        -webkit-transform-origin: 0 0;
-        -webkit-transform-style: preserve-3d;
-    }
-    
-    @-webkit-keyframes rotate {
-            from {
-                -webkit-transform: rotateY(0);
-            }
-            to {
-                -webkit-transform: rotateY(360deg);
-            }
-        }
-    
-    .wrapper div {
-        position: absolute;
-        -webkit-transform-origin: 0 0;
-    }
-    
-    .p1, .p2 {
-        width: 10px;
-        height: 10px;
-        -webkit-border-radius: 5px;
-        position: absolute;
-        top: -5px;
-        left: -5px;
-    }
-    
-    .p1 {
-        background: green;
-        -webkit-transform: translate3d(0px, 0px, 0px);
-    }
-    
-    .p2 {
-        background: red;
-        -webkit-transform: translate3d(72px, 32px, 147px);
-    }
-    
-    .line {
-        width: 166.8px;
-        height: 5px;
-        background: #00f;
-        -webkit-transform-origin: 0 0;
-    }
-    
-    .line:nth-child(2){
-        -webkit-transform: rotateX(90deg);
-    }
-    
-    .lineX {
-        
-        -webkit-transform-origin: 0 0;
-        -webkit-transform: rotateX(0deg);
-        -webkit-transform-style: preserve-3d;
-    }
-    
-    .lineY {
-        
-        -webkit-transform-origin: 0 0;
-        -webkit-transform: rotateY(-61.8deg);
-        -webkit-transform-style: preserve-3d;
-    }
-    
-    .lineZ {
-        
-        -webkit-transform-origin: 0 0;
-        -webkit-transform: rotateZ(23.96deg);
-        -webkit-transform-style: preserve-3d;
-    }
-    
-    .lineWrapper {
-        -webkit-transform-style: preserve-3d;
-        /*-webkit-transform: translate3d(50px, 50px, 50px);*/
-    }
-    
-    .axis {
-        color: #fff;
-        text-align: right;
-        font-size: 2em;
-    }
-    
-    .x {
-        width: 100px;
-        height: 5px;
-        background: yellow;
-    }
-    
-    .y {
-        width: 100px;
-        height: 5px;
-        background: purple;
-        -webkit-transform-origin: 0 0;
-        -webkit-transform: rotateZ(90deg);
-        color: #fff;
-    }
-    
-    .z {
-        width: 100px;
-        height: 5px;
-        background: pink;
-        -webkit-transform-origin: 0 0;
-        -webkit-transform: rotateY(-90deg);
-        color: #fff;
-    }
-</style>
+
 <div class="rotate"><div class="wrapper"></div></div>
 <script type="text/javascript">
-/*$.ajax({
-    url: 'data/c60.sdf',
+
+touchstart = 'ontouchstart' in document.documentElement ? 'touchstart' : 'mousedown';
+touchmove = 'ontouchmove' in document.documentElement ? 'touchmove' : 'mousemove';
+touchend = 'ontouchend' in document.documentElement ? 'touchend' : 'mouseup';
+    
+document.addEventListener('touchmove', function(e){ e.preventDefault(); });
+
+var startPoint;
+document.addEventListener(touchstart, function(_e){
+    var e = _e.changedTouches ? _e.changedTouches[0] : _e;
+    startPoint = {
+        x: e.pageX,
+        y: e.pageY
+    };
+});
+document.addEventListener(touchend, function(_e){
+    var e = _e.changedTouches ? _e.changedTouches[0] : _e;
+    spin(e.pageX - startPoint.x, e.pageY - startPoint.y);
+
+});  
+
+function spin(dx, dy){
+    console.log(dx,dy);
+}
+    
+$.ajax({
+    url: 'data/ethanol.pdb',
     success: function(data){
+        
+        
+        
         var s = 50;
-        var result = parse_sdf(data);
+        var result = parse_pdb(data);
         console.log(result);
         var atoms = result.atoms;
+        var wrapper = $('<div/>').addClass('wrapper');
         var con = $('<div/>').addClass('rot');
-        $('body').html(con)
+        wrapper.append(con);
+        $('body').html(wrapper)
+        
+        /*for(var i = -5; i < 5; i++){
+            wrapper.append($('<div/>').css({
+                width: 400,
+                height: 400,
+                background: '#fff',
+                opacity: 0.05,
+                '-webkit-transform': 'translate3d(0px, 0px, ' + (i*s) + 'px)'
+            }))
+        }*/
+        
         for(var i = 0; i < atoms.length; i++){
             var atom = atoms[i];
-            //console.log(atom);
-            con.append($('<div/>').html('<div></div><div></div><div></div>').addClass('atom').css('-webkit-transform', 'translate3d(' + (atom[0]*s - 10) + 'px, ' + (atom[1]*s - 10) + 'px, ' + (atom[2]*s) + 'px)'));
+            
+            var rgbColor = 'rgb(' + atom[3].join(", ") + ')';
+            console.log(atom, rgbColor);
+            con.append(
+                $('<div/>').html('<div></div><div></div><div></div>')
+                .addClass('atom')
+                .css('-webkit-transform', 'translate3d(' + (atom[0]*s - 10) + 'px, ' + (atom[1]*s - 10) + 'px, ' + (atom[2]*s) + 'px)')
+                .css('background-color', rgbColor)
+            );
             
         }
         
         var bonds = result.bonds;
         for(var i = 0; i < bonds.length; i++){
             var bond = bonds[i];
-            var p1 = atoms[bond[0]];
-            var p2 = atoms[bond[1]];
-            var l = Math.sqrt(Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2) + Math.pow(p1[2] - p2[2], 2));
-            var v = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]] ;
-            con.append($('<div/>').addClass('bond').css({ position: 'absolute', opacity: 0.2, width: l*s + 10, height: 5, webkitBorderRadius: 0, background: '#0f0'}).css('-webkit-transform', 'translate3d(' + (p1[0]*s) + 'px, ' + (p1[1]*s) + 'px, ' + (p1[2]*s) + 'px) rotate3d('+v[0]+', '+v[1]+', '+v[2]+', 90deg)'));    
+            var a1 = atoms[bond[0]];
+            var a2 = atoms[bond[1]];
+            var p1 = {
+                x: a1[0]*s,
+                y: a1[1]*s,
+                z: a1[2]*s
+            };
+            var p2 = {
+                x: a2[0]*s,
+                y: a2[1]*s,
+                z: a2[2]*s
+            };
+
+            var v = {
+                x: p2.x - p1.x,
+                y: p2.y - p1.y,
+                z: p2.z - p1.z
+            };
+            var r = Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2) + Math.pow(v.z, 2));
+            var zRot = Math.atan2(v.y, v.x);
+            var yRot = Math.PI/2 - Math.acos(v.z / r);
+            
+            con.append(
+                $('<div/>').addClass('lineWrapper').css('-webkit-transform', 'translate3d('+p1.x+'px, '+p1.y+'px, '+p1.z+'px)')
+                    .append($('<div/>').addClass('lineZ').css('-webkit-transform', 'rotateZ('+zRot+'rad)')
+                        .append($('<div/>').addClass('lineY').css('-webkit-transform', 'rotateY('+yRot+'rad)')
+                            .append($('<div/>').addClass('line').css('width', r))
+                            .append($('<div/>').addClass('line').css('width', r))
+                        )
+                    )
+            );    
         }
         
+        /*var rotate = $('.rot')[0];  
+        var last, x = 0, y = 0;    
+        $(document).mousemove(function(e){
+           var p = {x: e.pageX, y: e.pageY};
+           if(last){
+               x += p.x - last.x;
+               y += p.y - last.y;
+               //console.log('rotateX('+x+'deg) rotateY('+y+'deg)')
+               rotate.style.webkitTransform = 'rotateX('+y+'deg) rotateY('+x+'deg)';
+           } 
+           last = p;
+           
+        });*/
+       
+       
+    
+
+        
     }
-})*/
-console.log($('.wrapper'))
+})
+
+
+/*console.log($('.wrapper'))
 $('.wrapper')
     .append($('<div/>').addClass('x axis').text('x'))
     .append($('<div/>').addClass('y axis').text('y'))
@@ -498,23 +595,11 @@ $('.wrapper')
             
         )
     )
-    ;
+    ;*/
 
-var rotate = $('.rotate')[0];  
-var last, x = 0, y = 0;    
-$(document).mousemove(function(e){
-   var p = {x: e.pageX, y: e.pageY};
-   if(last){
-       x += p.x - last.x;
-       y += p.y - last.y;
-       //console.log('rotateX('+x+'deg) rotateY('+y+'deg)')
-       rotate.style.webkitTransform = 'rotateX('+y+'deg) rotateY('+x+'deg)';
-   } 
-   last = p;
-   
-});
 
-var xRotEl = $('.lineY')[0];
+
+/*var xRotEl = $('.lineY')[0];
 var xRot = 0;
 $(document).keydown(function(e){
     switch(e.keyCode){
@@ -528,6 +613,6 @@ $(document).keydown(function(e){
         xRotEl.style.webkitTransform = 'rotateY('+(xRot-=3)+'deg)';
         break;
     }
-})
+})*/
 </script>
 </body></html>
