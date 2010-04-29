@@ -1,0 +1,533 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+
+    <title>CanvasMol</title>
+    
+    <link type="text/css" rel="stylesheet" 
+href="CanvasMol-filer/canvasmol.css">
+    
+    <script type="text/javascript" src="CanvasMol-filer/jquery-1.js"></script>
+    <script type="text/javascript" src="CanvasMol-filer/jquery-ui-1.js"></script>
+    <script type="text/javascript" src="CanvasMol-filer/canvasmol.js"></script>
+    
+    <style type="text/css">
+        .rot {
+            -webkit-animation: rot 3s 4 linear;
+            -webkit-transform-style: preserve-3d;
+            -webkit-transform-origin: 0.5 0.5;
+            /*background: #00f;*/
+            position: absolute;
+            width: 400px;
+            height: 400px;
+        }
+        
+        .rot > div {
+            position: absolute;
+            top: 400px;
+            left: 400px;
+        }
+        
+        
+        .atom {
+            -webkit-transform-style: preserve-3d;
+        }
+        
+        .atom div {
+            position: absolute;
+            opacity: 1; 
+            width: 20px; 
+            height: 20px; 
+            -webkit-border-radius: 10px; 
+            background: #f00;
+            -webkit-transform-style: preserve-3d;
+        }
+        
+        .atom div:nth-child(1) {
+            -webkit-transform: rotateY(-90deg);
+        }
+        
+        .atom div:nth-child(2) {
+            -webkit-transform: rotateZ(-90deg) rotateY(90deg);
+        }
+        .
+        
+        .bond {
+            -webkit-transform-origin: 0 0;
+        }
+        
+        @-webkit-keyframes rot {
+            from {
+                -webkit-transform: rotateY(0);
+            }
+            to {
+                -webkit-transform: rotateY(360deg);
+            }
+        }
+
+    </style>
+</head><body>
+
+<!--div id="header">
+    <h1><a href="http://alteredqualia.com/canvasmol">CanvasMol</a></h1>
+</div>
+
+<div style="position: relative;" id="mlist" class="widget shadow drag 
+ui-draggable">
+<ul id="mitems"><li class="hedtop">Simple</li><li class="mol">Anandamide</li><li
+ class="mol">Aspirin</li><li class="mol">ATP</li><li class="mol">Caffeine</li><li
+ class="mol">Capsaicin</li><li class="mol">Carotene</li><li class="mol">Chlorophyll</li><li
+ class="mol">Cholesterol</li><li class="mol">Cocaine</li><li class="mol">Cubane</li><li
+ class="mol">Ethanol</li><li class="mol">Fructose</li><li class="mol">Glucose</li><li
+ class="mol">LSD</li><li class="mol">Lycopene</li><li class="mol">MDMA</li><li
+ class="mol">Morphine</li><li class="mol">Nicotine</li><li class="mol">Oxytocin</li><li
+ class="mol">Penicillin</li><li class="mol">Sildenafil</li><li 
+class="mol">Strychnine</li><li class="mol">Teflon</li><li class="mol">THC</li><li
+ class="mol">TNT</li><li class="hed">Crystals</li><li class="mol">Aluminium
+ oxide</li><li class="mol">Copper</li><li class="mol">Fluorite</li><li 
+class="mol">Salt</li><li class="mol">YBCO superconductor</li><li 
+class="hed">Carbon</li><li class="mol">Diamond</li><li class="mol">Graphite</li><li
+ class="mol">Buckyball</li><li class="mol">Buckytube</li><li class="hed">Bio</li><li
+ class="mol">Daptomycin</li><li class="mol">DNA</li><li class="mol">DNA 
+crystal</li><li class="mol">Transfer RNA</li><li class="mol">Adenovirus</li><li
+ class="mol">Black beetle virus</li><li class="mol">Tobacco mosaic virus</li><li
+ class="mol">Cyclosporin complex</li><li class="mol">KaiC protein</li><li
+ class="mol">Human prion protein</li><li class="mol">Cadherin</li></ul>
+</div>
+
+<div id="molecules"></div>
+
+<div id="colors" class="widget shadow drag ui-draggable"><div title="1 
+Hydrogen" style="color: rgb(255, 255, 255); text-shadow: 0px 0px 4px 
+rgb(255, 255, 255);">H</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div
+ title="2 Helium" style="color: rgb(217, 255, 255); text-shadow: 0px 0px
+ 4px rgb(217, 255, 255);">He</div><br class="clr"><div title="3 Lithium"
+ style="color: rgb(204, 128, 255); text-shadow: 0px 0px 4px rgb(204, 
+128, 255);">Li</div><div title="4 Beryllium" style="color: rgb(194, 255,
+ 0); text-shadow: 0px 0px 4px rgb(194, 255, 0);">Be</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div
+ title="5 Boron" style="color: rgb(255, 181, 181); text-shadow: 0px 0px 
+4px rgb(255, 181, 181);">B</div><div title="6 Carbon" style="color: 
+rgb(144, 144, 144); text-shadow: 0px 0px 4px rgb(144, 144, 144);">C</div><div
+ title="7 Nitrogen" style="color: rgb(48, 80, 248); text-shadow: 0px 0px
+ 4px rgb(48, 80, 248);">N</div><div title="8 Oxygen" style="color: 
+rgb(255, 13, 13); text-shadow: 0px 0px 4px rgb(255, 13, 13);">O</div><div
+ title="9 Fluorine" style="color: rgb(144, 224, 80); text-shadow: 0px 
+0px 4px rgb(144, 224, 80);">F</div><div title="10 Neon" style="color: 
+rgb(179, 227, 245); text-shadow: 0px 0px 4px rgb(179, 227, 245);">Ne</div><br
+ class="clr"><div title="11 Sodium" style="color: rgb(171, 92, 242); 
+text-shadow: 0px 0px 4px rgb(171, 92, 242);">Na</div><div title="12 
+Magnesium" style="color: rgb(138, 255, 0); text-shadow: 0px 0px 4px 
+rgb(138, 255, 0);">Mg</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div
+ title="13 Aluminium" style="color: rgb(191, 166, 166); text-shadow: 0px
+ 0px 4px rgb(191, 166, 166);">Al</div><div title="14 Silicon" 
+style="color: rgb(240, 200, 160); text-shadow: 0px 0px 4px rgb(240, 200,
+ 160);">Si</div><div title="15 Phosphorus" style="color: rgb(255, 128, 
+0); text-shadow: 0px 0px 4px rgb(255, 128, 0);">P</div><div title="16 
+Sulfur" style="color: rgb(255, 255, 48); text-shadow: 0px 0px 4px 
+rgb(255, 255, 48);">S</div><div title="17 Chlorine" style="color: 
+rgb(31, 240, 31); text-shadow: 0px 0px 4px rgb(31, 240, 31);">Cl</div><div
+ title="18 Argon" style="color: rgb(128, 209, 227); text-shadow: 0px 0px
+ 4px rgb(128, 209, 227);">Ar</div><br class="clr"><div title="19 
+Potassium" style="color: rgb(143, 64, 212); text-shadow: 0px 0px 4px 
+rgb(143, 64, 212);">K</div><div title="20 Calcium" style="color: rgb(61,
+ 255, 0); text-shadow: 0px 0px 4px rgb(61, 255, 0);">Ca</div><div 
+title="21 Scandium" style="color: rgb(230, 230, 230); text-shadow: 0px 
+0px 4px rgb(230, 230, 230);">Sc</div><div title="22 Titanium" 
+style="color: rgb(191, 194, 199); text-shadow: 0px 0px 4px rgb(191, 194,
+ 199);">Ti</div><div title="23 Vanadium" style="color: rgb(166, 166, 
+171); text-shadow: 0px 0px 4px rgb(166, 166, 171);">V</div><div 
+title="24 Chromium" style="color: rgb(138, 153, 199); text-shadow: 0px 
+0px 4px rgb(138, 153, 199);">Cr</div><div title="25 Manganese" 
+style="color: rgb(156, 122, 199); text-shadow: 0px 0px 4px rgb(156, 122,
+ 199);">Mn</div><div title="26 Iron" style="color: rgb(224, 102, 51); 
+text-shadow: 0px 0px 4px rgb(224, 102, 51);">Fe</div><div title="27 
+Cobalt" style="color: rgb(240, 144, 160); text-shadow: 0px 0px 4px 
+rgb(240, 144, 160);">Co</div><div title="28 Nickel" style="color: 
+rgb(80, 208, 80); text-shadow: 0px 0px 4px rgb(80, 208, 80);">Ni</div><div
+ title="29 Copper" style="color: rgb(200, 128, 51); text-shadow: 0px 0px
+ 4px rgb(200, 128, 51);">Cu</div><div title="30 Zinc" style="color: 
+rgb(125, 128, 176); text-shadow: 0px 0px 4px rgb(125, 128, 176);">Zn</div><div
+ title="31 Gallium" style="color: rgb(194, 143, 143); text-shadow: 0px 
+0px 4px rgb(194, 143, 143);">Ga</div><div title="32 Germanium" 
+style="color: rgb(102, 143, 143); text-shadow: 0px 0px 4px rgb(102, 143,
+ 143);">Ge</div><div title="33 Arsenic" style="color: rgb(189, 128, 
+227); text-shadow: 0px 0px 4px rgb(189, 128, 227);">As</div><div 
+title="34 Selenium" style="color: rgb(255, 161, 0); text-shadow: 0px 0px
+ 4px rgb(255, 161, 0);">Se</div><div title="35 Bromine" style="color: 
+rgb(166, 41, 41); text-shadow: 0px 0px 4px rgb(166, 41, 41);">Br</div><div
+ title="36 Krypton" style="color: rgb(92, 184, 209); text-shadow: 0px 
+0px 4px rgb(92, 184, 209);">Kr</div><br class="clr"><div title="37 
+Rubidium" style="color: rgb(112, 46, 176); text-shadow: 0px 0px 4px 
+rgb(112, 46, 176);">Rb</div><div title="38 Strontium" style="color: 
+rgb(0, 255, 0); text-shadow: 0px 0px 4px rgb(0, 255, 0);">Sr</div><div 
+title="39 Yttrium" style="color: rgb(148, 255, 255); text-shadow: 0px 
+0px 4px rgb(148, 255, 255);">Y</div><div title="40 Zirconium" 
+style="color: rgb(148, 224, 224); text-shadow: 0px 0px 4px rgb(148, 224,
+ 224);">Zr</div><div title="41 Niobium" style="color: rgb(115, 194, 
+201); text-shadow: 0px 0px 4px rgb(115, 194, 201);">Nb</div><div 
+title="42 Molybdenum" style="color: rgb(84, 181, 181); text-shadow: 0px 
+0px 4px rgb(84, 181, 181);">Mo</div><div title="43 Technetium" 
+style="color: rgb(59, 158, 158); text-shadow: 0px 0px 4px rgb(59, 158, 
+158);">Tc</div><div title="44 Ruthenium" style="color: rgb(36, 143, 
+143); text-shadow: 0px 0px 4px rgb(36, 143, 143);">Ru</div><div 
+title="45 Rhodium" style="color: rgb(10, 125, 140); text-shadow: 0px 0px
+ 4px rgb(10, 125, 140);">Rh</div><div title="46 Palladium" style="color:
+ rgb(0, 105, 133); text-shadow: 0px 0px 4px rgb(0, 105, 133);">Pd</div><div
+ title="47 Silver" style="color: rgb(192, 192, 192); text-shadow: 0px 
+0px 4px rgb(192, 192, 192);">Ag</div><div title="48 Cadmium" 
+style="color: rgb(255, 217, 143); text-shadow: 0px 0px 4px rgb(255, 217,
+ 143);">Cd</div><div title="49 Indium" style="color: rgb(166, 117, 115);
+ text-shadow: 0px 0px 4px rgb(166, 117, 115);">In</div><div title="50 
+Tin" style="color: rgb(102, 128, 128); text-shadow: 0px 0px 4px rgb(102,
+ 128, 128);">Sn</div><div title="51 Antimony" style="color: rgb(158, 99,
+ 181); text-shadow: 0px 0px 4px rgb(158, 99, 181);">Sb</div><div 
+title="52 Tellurium" style="color: rgb(212, 122, 0); text-shadow: 0px 
+0px 4px rgb(212, 122, 0);">Te</div><div title="53 Iodine" style="color: 
+rgb(148, 0, 148); text-shadow: 0px 0px 4px rgb(148, 0, 148);">I</div><div
+ title="54 Xenon" style="color: rgb(66, 158, 176); text-shadow: 0px 0px 
+4px rgb(66, 158, 176);">Xe</div><br class="clr"><div title="55 Caesium" 
+style="color: rgb(87, 23, 143); text-shadow: 0px 0px 4px rgb(87, 23, 
+143);">Cs</div><div title="56 Barium" style="color: rgb(0, 201, 0); 
+text-shadow: 0px 0px 4px rgb(0, 201, 0);">Ba</div><div title="57 
+Lanthanum" style="color: rgb(112, 212, 255); text-shadow: 0px 0px 4px 
+rgb(112, 212, 255);">La</div><div title="72 Hafnium" style="color: 
+rgb(77, 194, 255); text-shadow: 0px 0px 4px rgb(77, 194, 255);">Hf</div><div
+ title="73 Tantalum" style="color: rgb(77, 166, 255); text-shadow: 0px 
+0px 4px rgb(77, 166, 255);">Ta</div><div title="74 Tungsten" 
+style="color: rgb(33, 148, 214); text-shadow: 0px 0px 4px rgb(33, 148, 
+214);">W</div><div title="75 Rhenium" style="color: rgb(38, 125, 171); 
+text-shadow: 0px 0px 4px rgb(38, 125, 171);">Re</div><div title="76 
+Osmium" style="color: rgb(38, 102, 150); text-shadow: 0px 0px 4px 
+rgb(38, 102, 150);">Os</div><div title="77 Iridium" style="color: 
+rgb(23, 84, 135); text-shadow: 0px 0px 4px rgb(23, 84, 135);">Ir</div><div
+ title="78 Platinum" style="color: rgb(208, 208, 224); text-shadow: 0px 
+0px 4px rgb(208, 208, 224);">Pt</div><div title="79 Gold" style="color: 
+rgb(255, 209, 35); text-shadow: 0px 0px 4px rgb(255, 209, 35);">Au</div><div
+ title="80 Mercury" style="color: rgb(184, 184, 208); text-shadow: 0px 
+0px 4px rgb(184, 184, 208);">Hg</div><div title="81 Thallium" 
+style="color: rgb(166, 84, 77); text-shadow: 0px 0px 4px rgb(166, 84, 
+77);">Tl</div><div title="82 Lead" style="color: rgb(87, 89, 97); 
+text-shadow: 0px 0px 4px rgb(87, 89, 97);">Pb</div><div title="83 
+Bismuth" style="color: rgb(158, 79, 181); text-shadow: 0px 0px 4px 
+rgb(158, 79, 181);">Bi</div><div title="84 Polonium" style="color: 
+rgb(171, 92, 0); text-shadow: 0px 0px 4px rgb(171, 92, 0);">Po</div><div
+ title="85 Astatine" style="color: rgb(117, 79, 69); text-shadow: 0px 
+0px 4px rgb(117, 79, 69);">At</div><div title="86 Radon" style="color: 
+rgb(66, 130, 150); text-shadow: 0px 0px 4px rgb(66, 130, 150);">Rn</div><br
+ class="clr"><div title="87 Francium" style="color: rgb(66, 0, 102); 
+text-shadow: 0px 0px 4px rgb(66, 0, 102);">Fr</div><div title="88 
+Radium" style="color: rgb(0, 125, 0); text-shadow: 0px 0px 4px rgb(0, 
+125, 0);">Ra</div><div title="89 Actinium" style="color: rgb(112, 171, 
+250); text-shadow: 0px 0px 4px rgb(112, 171, 250);">Ac</div><div 
+title="104 Rutherfordium" style="color: rgb(204, 0, 89); text-shadow: 
+0px 0px 4px rgb(204, 0, 89);">Rf</div><div title="105 Dubnium" 
+style="color: rgb(209, 0, 79); text-shadow: 0px 0px 4px rgb(209, 0, 
+79);">Db</div><div title="106 Seaborgium" style="color: rgb(217, 0, 69);
+ text-shadow: 0px 0px 4px rgb(217, 0, 69);">Sg</div><div title="107 
+Bohrium" style="color: rgb(224, 0, 56); text-shadow: 0px 0px 4px 
+rgb(224, 0, 56);">Bh</div><div title="108 Hassium" style="color: 
+rgb(230, 0, 46); text-shadow: 0px 0px 4px rgb(230, 0, 46);">Hs</div><div
+ title="109 Meitnerium" style="color: rgb(235, 0, 38); text-shadow: 0px 
+0px 4px rgb(235, 0, 38);">Mt</div><div title="110 Darmstadtium" 
+style="color: rgb(235, 0, 38); text-shadow: 0px 0px 4px rgb(235, 0, 
+38);">Ds</div><div title="111 Roentgenium" style="color: rgb(235, 0, 
+38); text-shadow: 0px 0px 4px rgb(235, 0, 38);">Rg</div><div title="112 
+Copernicium" style="color: rgb(235, 0, 38); text-shadow: 0px 0px 4px 
+rgb(235, 0, 38);">Cn</div><div title="113 Ununtrium" style="color: 
+rgb(235, 0, 38); text-shadow: 0px 0px 4px rgb(235, 0, 38);">Uut</div><div
+ title="114 Ununquadium" style="color: rgb(235, 0, 38); text-shadow: 0px
+ 0px 4px rgb(235, 0, 38);">Uuq</div><div title="115 Ununpentium" 
+style="color: rgb(235, 0, 38); text-shadow: 0px 0px 4px rgb(235, 0, 
+38);">Uup</div><div title="116 Ununhexium" style="color: rgb(235, 0, 
+38); text-shadow: 0px 0px 4px rgb(235, 0, 38);">Uuh</div><div title="117
+ Ununseptium" style="color: rgb(235, 0, 38); text-shadow: 0px 0px 4px 
+rgb(235, 0, 38);">Uus</div><div title="118 Ununoctium" style="color: 
+rgb(235, 0, 38); text-shadow: 0px 0px 4px rgb(235, 0, 38);">Uuo</div><br
+ class="clr"><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div 
+title="58 Cerium" style="color: rgb(255, 255, 199); text-shadow: 0px 0px
+ 4px rgb(255, 255, 199);">Ce</div><div title="59 Praseodymium" 
+style="color: rgb(217, 255, 199); text-shadow: 0px 0px 4px rgb(217, 255,
+ 199);">Pr</div><div title="60 Neodymium" style="color: rgb(199, 255, 
+199); text-shadow: 0px 0px 4px rgb(199, 255, 199);">Nd</div><div 
+title="61 Promethium" style="color: rgb(163, 255, 199); text-shadow: 0px
+ 0px 4px rgb(163, 255, 199);">Pm</div><div title="62 Samarium" 
+style="color: rgb(143, 255, 199); text-shadow: 0px 0px 4px rgb(143, 255,
+ 199);">Sm</div><div title="63 Europium" style="color: rgb(97, 255, 
+199); text-shadow: 0px 0px 4px rgb(97, 255, 199);">Eu</div><div 
+title="64 Gadolinium" style="color: rgb(69, 255, 199); text-shadow: 0px 
+0px 4px rgb(69, 255, 199);">Gd</div><div title="65 Terbium" 
+style="color: rgb(48, 255, 199); text-shadow: 0px 0px 4px rgb(48, 255, 
+199);">Tb</div><div title="66 Dysprosium" style="color: rgb(31, 255, 
+199); text-shadow: 0px 0px 4px rgb(31, 255, 199);">Dy</div><div 
+title="67 Holmium" style="color: rgb(0, 255, 156); text-shadow: 0px 0px 
+4px rgb(0, 255, 156);">Ho</div><div title="68 Erbium" style="color: 
+rgb(0, 230, 117); text-shadow: 0px 0px 4px rgb(0, 230, 117);">Er</div><div
+ title="69 Thulium" style="color: rgb(0, 212, 82); text-shadow: 0px 0px 
+4px rgb(0, 212, 82);">Tm</div><div title="70 Ytterbium" style="color: 
+rgb(0, 191, 56); text-shadow: 0px 0px 4px rgb(0, 191, 56);">Yb</div><div
+ title="71 Lutetium" style="color: rgb(0, 171, 36); text-shadow: 0px 0px
+ 4px rgb(0, 171, 36);">Lu</div><div>&nbsp;</div><br class="clr"><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div><div
+ title="90 Thorium" style="color: rgb(0, 186, 255); text-shadow: 0px 0px
+ 4px rgb(0, 186, 255);">Th</div><div title="91 Protactinium" 
+style="color: rgb(0, 161, 255); text-shadow: 0px 0px 4px rgb(0, 161, 
+255);">Pa</div><div title="92 Uranium" style="color: rgb(0, 143, 255); 
+text-shadow: 0px 0px 4px rgb(0, 143, 255);">U</div><div title="93 
+Neptunium" style="color: rgb(0, 128, 255); text-shadow: 0px 0px 4px 
+rgb(0, 128, 255);">Np</div><div title="94 Plutonium" style="color: 
+rgb(0, 107, 255); text-shadow: 0px 0px 4px rgb(0, 107, 255);">Pu</div><div
+ title="95 Americium" style="color: rgb(84, 92, 242); text-shadow: 0px 
+0px 4px rgb(84, 92, 242);">Am</div><div title="96 Curium" style="color: 
+rgb(120, 92, 227); text-shadow: 0px 0px 4px rgb(120, 92, 227);">Cm</div><div
+ title="97 Berkelium" style="color: rgb(138, 79, 227); text-shadow: 0px 
+0px 4px rgb(138, 79, 227);">Bk</div><div title="98 Californium" 
+style="color: rgb(161, 54, 212); text-shadow: 0px 0px 4px rgb(161, 54, 
+212);">Cf</div><div title="99 Einsteinium" style="color: rgb(179, 31, 
+212); text-shadow: 0px 0px 4px rgb(179, 31, 212);">Es</div><div 
+title="100 Fermium" style="color: rgb(179, 31, 186); text-shadow: 0px 
+0px 4px rgb(179, 31, 186);">Fm</div><div title="101 Mendelevium" 
+style="color: rgb(179, 13, 166); text-shadow: 0px 0px 4px rgb(179, 13, 
+166);">Md</div><div title="102 Nobelium" style="color: rgb(189, 13, 
+135); text-shadow: 0px 0px 4px rgb(189, 13, 135);">No</div><div 
+title="103 Lawrencium" style="color: rgb(199, 0, 102); text-shadow: 0px 
+0px 4px rgb(199, 0, 102);">Lr</div><div>&nbsp;</div><br class="clr"></div>
+
+<br class="clr">
+
+<div id="info" class="widget shadow drag ui-draggable">
+    <p>Check example molecules.
+    </p><p>Import PDB/SDF/MOL files.
+    </p><p>Export to PNG image.
+    <br><br>
+    </p><p>Drag widgets around.
+    </p><p>Drag molecule to rotate. 
+    </p><p>Toggle automatic rotation around X,Y,Z axis.
+    </p><p>Try different rendering options.
+    <br><br>
+    </p><p>Works with Firefox, Opera, Chrome, Safari.
+    </p><p>Best performance in Chrome and Opera.
+    <br><br>
+    </p><p class="warning">Warning: complex molecules are very slow, 
+your browser may freeze occasionally if you enable autorotation.
+    <br><br>
+    </p><p><a href="mailto:postfilter@gmail.com">Feedback</a>
+</p></div>
+
+<div id="import" class="widget shadow drag ui-draggable">
+    <form><textarea id="pdbtext">Paste here PDB / SDF / MOL molecule 
+definition and click Import molecule button</textarea>
+    </form>
+    <div class="xbutton" id="b_import">Import molecule</div>
+</div>
+
+<div id="touchcontrols" class="widget shadow drag ui-draggable">
+<p>Show molecule rotation buttons for touchscreen devices like iPhone / 
+iPad.
+</p><div class="xbutton" id="b_controls">Toggle controls</div>
+</div>
+
+<div class="shadow widget drag ui-draggable" id="log"></div-->
+
+<style type="text/css">
+    
+    * {
+        position: absolute;
+    }
+    
+    .rotate {
+        /*-webkit-animation: rotate 2s 1 linear;*/
+        -webkit-transform-origin: 0 0;
+        -webkit-transform-style: preserve-3d;
+        position: absolute;
+        left: 100px;
+        top: 100px;
+    }
+    
+    .wrapper {
+        
+        -webkit-transform: translate3d(100px, 100px, 0px) rotateX(60deg) rotateZ(20deg);
+        -webkit-transform-origin: 0 0;
+        -webkit-transform-style: preserve-3d;
+    }
+    
+    @-webkit-keyframes rotate {
+            from {
+                -webkit-transform: rotateY(0);
+            }
+            to {
+                -webkit-transform: rotateY(360deg);
+            }
+        }
+    
+    .wrapper div {
+        position: absolute;
+        -webkit-transform-origin: 0 0;
+    }
+    
+    .p1, .p2 {
+        width: 10px;
+        height: 10px;
+        -webkit-border-radius: 5px;
+        position: absolute;
+        top: -5px;
+        left: -5px;
+    }
+    
+    .p1 {
+        background: green;
+        -webkit-transform: translate3d(0px, 0px, 0px);
+    }
+    
+    .p2 {
+        background: red;
+        -webkit-transform: translate3d(72px, 32px, 147px);
+    }
+    
+    .line {
+        width: 166.8px;
+        height: 5px;
+        background: #00f;
+        -webkit-transform-origin: 0 0;
+    }
+    
+    .line:nth-child(2){
+        -webkit-transform: rotateX(90deg);
+    }
+    
+    .lineX {
+        
+        -webkit-transform-origin: 0 0;
+        -webkit-transform: rotateX(0deg);
+        -webkit-transform-style: preserve-3d;
+    }
+    
+    .lineY {
+        
+        -webkit-transform-origin: 0 0;
+        -webkit-transform: rotateY(-61.8deg);
+        -webkit-transform-style: preserve-3d;
+    }
+    
+    .lineZ {
+        
+        -webkit-transform-origin: 0 0;
+        -webkit-transform: rotateZ(23.96deg);
+        -webkit-transform-style: preserve-3d;
+    }
+    
+    .lineWrapper {
+        -webkit-transform-style: preserve-3d;
+        /*-webkit-transform: translate3d(50px, 50px, 50px);*/
+    }
+    
+    .axis {
+        color: #fff;
+        text-align: right;
+        font-size: 2em;
+    }
+    
+    .x {
+        width: 100px;
+        height: 5px;
+        background: yellow;
+    }
+    
+    .y {
+        width: 100px;
+        height: 5px;
+        background: purple;
+        -webkit-transform-origin: 0 0;
+        -webkit-transform: rotateZ(90deg);
+        color: #fff;
+    }
+    
+    .z {
+        width: 100px;
+        height: 5px;
+        background: pink;
+        -webkit-transform-origin: 0 0;
+        -webkit-transform: rotateY(-90deg);
+        color: #fff;
+    }
+</style>
+<div class="rotate"><div class="wrapper"></div></div>
+<script type="text/javascript">
+/*$.ajax({
+    url: 'data/c60.sdf',
+    success: function(data){
+        var s = 50;
+        var result = parse_sdf(data);
+        console.log(result);
+        var atoms = result.atoms;
+        var con = $('<div/>').addClass('rot');
+        $('body').html(con)
+        for(var i = 0; i < atoms.length; i++){
+            var atom = atoms[i];
+            //console.log(atom);
+            con.append($('<div/>').html('<div></div><div></div><div></div>').addClass('atom').css('-webkit-transform', 'translate3d(' + (atom[0]*s - 10) + 'px, ' + (atom[1]*s - 10) + 'px, ' + (atom[2]*s) + 'px)'));
+            
+        }
+        
+        var bonds = result.bonds;
+        for(var i = 0; i < bonds.length; i++){
+            var bond = bonds[i];
+            var p1 = atoms[bond[0]];
+            var p2 = atoms[bond[1]];
+            var l = Math.sqrt(Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2) + Math.pow(p1[2] - p2[2], 2));
+            var v = [p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]] ;
+            con.append($('<div/>').addClass('bond').css({ position: 'absolute', opacity: 0.2, width: l*s + 10, height: 5, webkitBorderRadius: 0, background: '#0f0'}).css('-webkit-transform', 'translate3d(' + (p1[0]*s) + 'px, ' + (p1[1]*s) + 'px, ' + (p1[2]*s) + 'px) rotate3d('+v[0]+', '+v[1]+', '+v[2]+', 90deg)'));    
+        }
+        
+    }
+})*/
+console.log($('.wrapper'))
+$('.wrapper')
+    .append($('<div/>').addClass('x axis').text('x'))
+    .append($('<div/>').addClass('y axis').text('y'))
+    .append($('<div/>').addClass('z axis').text('z'))
+    .append($('<div/>').addClass('p1'))
+    .append($('<div/>').addClass('p2'))
+    
+    .append($('<div/>').addClass('lineWrapper')
+        .append($('<div/>').addClass('lineZ')
+
+                .append($('<div/>').addClass('lineY')
+                    .append($('<div/>').addClass('line'))
+                    .append($('<div/>').addClass('line'))
+                )
+            
+        )
+    )
+    ;
+
+var rotate = $('.rotate')[0];  
+var last, x = 0, y = 0;    
+$(document).mousemove(function(e){
+   var p = {x: e.pageX, y: e.pageY};
+   if(last){
+       x += p.x - last.x;
+       y += p.y - last.y;
+       //console.log('rotateX('+x+'deg) rotateY('+y+'deg)')
+       rotate.style.webkitTransform = 'rotateX('+y+'deg) rotateY('+x+'deg)';
+   } 
+   last = p;
+   
+});
+
+var xRotEl = $('.lineY')[0];
+var xRot = 0;
+$(document).keydown(function(e){
+    switch(e.keyCode){
+        case 38:
+        //console.log('up')
+        xRotEl.style.webkitTransform = 'rotateY('+(xRot+=3)+'deg)';
+        break;
+        
+        case 40:
+        //console.log('down')
+        xRotEl.style.webkitTransform = 'rotateY('+(xRot-=3)+'deg)';
+        break;
+    }
+})
+</script>
+</body></html>
