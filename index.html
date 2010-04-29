@@ -10,7 +10,7 @@
         
         <title>CSSMol</title>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-        <script type="text/javascript" src="canvasmol.js"></script>
+        <script type="text/javascript" src="http://alteredqualia.com/canvasmol/js/canvasmol.js"></script>
         <style type="text/css">
             
             html, body, #molecule, .wrapper {
@@ -34,15 +34,17 @@
             
             .atom {
                 -webkit-transform-style: preserve-3d;
+                top: -20px;
+                left: -20px;
             }
             
             .atom div {
-                width: 20px;
-                height: 20px;
-                -webkit-border-radius: 10px;
+                width: 40px;
+                height: 40px;
+                -webkit-border-radius: 20px;
                 background: inherit;
                 -webkit-transform-style: preserve-3d;
-                background-image: -webkit-gradient( radial, 10 10, 10, 0 0, 5, from(rgba(0,0,0,0.2)), to(rgba(255,255,255,0.5)) ); 
+                background-image: -webkit-gradient( radial, 20 20, 20, 0 0, 10, from(rgba(0,0,0,0.2)), to(rgba(255,255,255,0.5)) ); 
             }
                     
             .atom div:nth-child(1) {
@@ -59,7 +61,7 @@
             }
 
             .line {
-                height: 3px;
+                height: 4px;
                 background: orange;
                 -webkit-transform-origin: 0 0;
             }
@@ -144,12 +146,12 @@
             });
             
             function spin(dx, dy, dt){
-                var s = 200;
+                var s = 100;
                 var tScale = 10;
                 var rot = $('.rot')[0];
                 if (rot) {
-                    var rotY = dx / dt * s;
-                    var rotX = dy / dt * s;
+                    var rotY = Math.min(Math.max(-180, dx / dt * s), 180);
+                    var rotX = Math.min(Math.max(-180, dy / dt * s), 180);
                     
                     var theTransform = window.getComputedStyle(rot).webkitTransform;
                     var matrix = new WebKitCSSMatrix(theTransform);
@@ -193,7 +195,7 @@
             });
                  
             function renderMolecule(data, type){
-                var s = 50;
+                var s = 100;
                 
                 var typeMap = {
                     sdf: 'sdf',
@@ -215,7 +217,7 @@
                 for (var i = 0, len = atoms.length; i < len; i++) {
                     atom = atoms[i];
                     rgbColor = 'rgb(' + atom[3].join(", ") + ')';
-                    els.push('<div class="atom" style="-webkit-transform: translate3d(' + (atom[0] * s - 10) + 'px, ' + (atom[1] * s - 10) + 'px, ' + (atom[2] * s) + 'px); background-color: '+rgbColor+';"><div></div><div></div><div></div></div>');
+                    els.push('<div class="atom" style="-webkit-transform: translate3d(' + (atom[0] * s) + 'px, ' + (atom[1] * s) + 'px, ' + (atom[2] * s) + 'px); background-color: '+rgbColor+';"><div></div><div></div><div></div></div>');
                     atomX.push(atom[0]);
                     atomY.push(atom[1]);
                     atomZ.push(atom[2]);
@@ -236,6 +238,7 @@
                 var dz = -(maxZ - minZ)/2 - minZ;
 
                 var scaling = Math.min(1, Math.min(screen.width / (maxX-minX), screen.height / (maxY-minY)) * 0.6);
+                console.log([screen.width, screen.height])
                 moleculeWrapper.css('-webkit-transform', 'scale('+scaling+')');
                 
                 con.css('-webkit-transform', 'translate3d('+dx+'px, '+dy+'px, '+dz+'px)');
@@ -266,6 +269,7 @@
                     var r = Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2) + Math.pow(v.z, 2));
                     var zRot = Math.atan2(v.y, v.x);
                     var yRot = Math.PI / 2 - Math.acos(v.z / r);
+                    console.log('yRot', yRot*(180/Math.PI))
                     
                     els.push('<div class="lineWrapper" style="-webkit-transform: translate3d(' + p1.x + 'px, ' + p1.y + 'px, ' + p1.z + 'px);"><div class="lineZ" style="-webkit-transform: rotateZ(' + zRot + 'rad);"><div class="lineY" style="-webkit-transform: rotateY(' + yRot + 'rad);"><div class="line" style="width: '+r+'px;"></div><div class="line" style="width: '+r+'px;"></div></div></div></div>');
                 }
