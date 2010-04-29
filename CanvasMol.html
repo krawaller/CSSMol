@@ -1,555 +1,251 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html><head>
-<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
-<meta name="viewport" content="width=device-width; minimum-scale=1.0; maximum-scale=1.0; initial-scale=1.0"/>
-
-    <title>CanvasMol</title>
-    
-    <link type="text/css" rel="stylesheet" href="CanvasMol-filer/canvasmol.css">
-    
-    <script type="text/javascript" src="CanvasMol-filer/jquery-1.js"></script>
-    <script type="text/javascript" src="CanvasMol-filer/jquery-ui-1.js"></script>
-    <script type="text/javascript" src="CanvasMol-filer/canvasmol.js"></script>
-    
-    
-    
-    
-    <style type="text/css">
-        html, body, #molecule, .wrapper {
-            width: 100%;
-            height: 100%;
-        }
-        
-        .rot {
-            /*-webkit-animation: rot 3s 4 linear;*/
-            -webkit-transition-property: -webkit-transform;
-            -webkit-transition-duration: 1.5s;
-            -webkit-transition-timing-function : ease-out;
-            -webkit-transition-delay: 0;
-            
-            -webkit-transform-style: preserve-3d;
-            -webkit-transform-origin: 0.5 0.5;
-            /*background: #00f;*/
-            position: absolute;
-            top: 50%;
-            left: 50%;
-        
-        }
-        
-        .rot > div {
-            position: absolute;
-
-        }
-        
-        
-        .atom {
-            -webkit-transform-style: preserve-3d;
-        }
-        
-        .atom div {
-            position: absolute;
-            opacity: 1; 
-            width: 20px; 
-            height: 20px; 
-            -webkit-border-radius: 10px; 
-            background: inherit;
-            -webkit-transform-style: preserve-3d;
-            background-image: -webkit-gradient( radial, 10 10, 10, 0 0, 5, from(rgba(0,0,0,0.2)), to(rgba(255,255,255,0.5)) ); 
-        }
-        
-        .atom div:nth-child(1) {
-            -webkit-transform: rotateY(-90deg);
-        }
-        
-        .atom div:nth-child(2) {
-            -webkit-transform: rotateZ(-90deg) rotateY(90deg);
-        }
-        .
-        
-        .bond {
-            -webkit-transform-origin: 0 0;
-        }
-        
-        @-webkit-keyframes rot {
-            from {
-                -webkit-transform: rotateY(0);
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width; minimum-scale=1.0; maximum-scale=1.0; initial-scale=1.0"/>
+        <title>CSSMol</title>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="CanvasMol-filer/canvasmol.js"></script>
+        <style type="text/css">
+            html, body, #molecule, .wrapper {
+                width: 100%;
+                height: 100%;
+                background: #000;
+                margin: 0;
+                padding: 0;
             }
-            to {
-                -webkit-transform: rotateY(360deg);
+            * {
+                position: absolute;
             }
-        }
-
-    </style>
-    
-    
-    <style type="text/css">
-    
-    * {
-        position: absolute;
-    }
-    
-    .rotate {
-        /*-webkit-animation: rotate 2s 1 linear;*/
-        -webkit-transform-origin: 0 0;
-        -webkit-transform-style: preserve-3d;
-        position: absolute;
-        left: 100px;
-        top: 100px;
-    }
-    
-    /*.wrapper {
-        
-        -webkit-transform: translate3d(100px, 100px, 0px) rotateX(60deg) rotateZ(20deg);
-        -webkit-transform-origin: 0 0;
-        -webkit-transform-style: preserve-3d;
-    }*/
-    
-    @-webkit-keyframes rotate {
-            from {
-                -webkit-transform: rotateY(0);
+            
+            .rot {
+                -webkit-transition: -webkit-transform 1.5s ease-out;
+                -webkit-transform-style: preserve-3d;
+                -webkit-transform-origin: 0.5 0.5;
+                top: 50%;
+                left: 50%;
             }
-            to {
-                -webkit-transform: rotateY(360deg);
+            
+            .atom {
+                -webkit-transform-style: preserve-3d;
             }
-        }
-    
-    /*.wrapper div {
-        position: absolute;
-        -webkit-transform-origin: 0 0;
-    }*/
-    
-    .p1, .p2 {
-        width: 10px;
-        height: 10px;
-        -webkit-border-radius: 5px;
-        position: absolute;
-        top: -5px;
-        left: -5px;
-    }
-    
-    .p1 {
-        background: green;
-        -webkit-transform: translate3d(0px, 0px, 0px);
-    }
-    
-    .p2 {
-        background: red;
-        -webkit-transform: translate3d(72px, 32px, 147px);
-    }
-    
-    .line {
-        height: 3px;
-        background: orange;
-        -webkit-transform-origin: 0 0;
-    }
-    
-    .line:nth-child(2){
-        -webkit-transform: rotateX(90deg);
-    }
-    
-    .lineX {
-        
-        -webkit-transform-origin: 0 0;
-        -webkit-transform: rotateX(0deg);
-        -webkit-transform-style: preserve-3d;
-    }
-    
-    .lineY {
-        
-        -webkit-transform-origin: 0 0;
-        /*-webkit-transform: rotateY(-1.078rad);*/
-        -webkit-transform-style: preserve-3d;
-    }
-    
-    .lineZ {
-        
-        -webkit-transform-origin: 0 0;
-        /*-webkit-transform: rotateZ(23.96deg);*/
-        -webkit-transform-style: preserve-3d;
-    }
-    
-    .lineWrapper {
-        -webkit-transform-style: preserve-3d;
-        /*-webkit-transform: translate3d(50px, 50px, 50px);*/
-    }
-    
-    .axis {
-        color: #fff;
-        text-align: right;
-        font-size: 2em;
-    }
-    
-    .x {
-        width: 100px;
-        height: 5px;
-        background: yellow;
-    }
-    
-    .y {
-        width: 100px;
-        height: 5px;
-        background: purple;
-        -webkit-transform-origin: 0 0;
-        -webkit-transform: rotateZ(90deg);
-        color: #fff;
-    }
-    
-    .z {
-        width: 100px;
-        height: 5px;
-        background: pink;
-        -webkit-transform-origin: 0 0;
-        -webkit-transform: rotateY(-90deg);
-        color: #fff;
-    }
-</style>
-</head><body>
-    <div id="molecule"></div>
-    <div id="menu"></div>
-
-<script type="text/javascript">
-
-touchstart = 'ontouchstart' in document.documentElement ? 'touchstart' : 'mousedown';
-touchmove = 'ontouchmove' in document.documentElement ? 'touchmove' : 'mousemove';
-touchend = 'ontouchend' in document.documentElement ? 'touchend' : 'mouseup';
-    
-document.addEventListener('touchmove', function(e){ e.preventDefault(); });
-
-var startPoint, at;
-document.addEventListener(touchstart, function(_e){
-    var e = _e.changedTouches ? _e.changedTouches[0] : _e;
-    startPoint = {
-        x: e.pageX,
-        y: e.pageY
-    };
-    at = +new Date();
-});
-document.addEventListener(touchend, function(_e){
-    var e = _e.changedTouches ? _e.changedTouches[0] : _e;
-    spin(e.pageX - startPoint.x, e.pageY - startPoint.y, +new Date()-at);
-});  
-
-function spin(dx, dy, dt){
-    var s = 200;
-    var tScale = 10;
-    var rot = $('.rot')[0];
-    if (rot) {
-        var rotY = dx / dt * s;
-        var rotX = dy / dt * s;
-        
-        
-        var theTransform = window.getComputedStyle(rot).webkitTransform;
-        var matrix = new WebKitCSSMatrix(theTransform);
-        rot.style.webkitTransform = matrix.rotate(rotX, rotY, 0);
-    }
-}
-    
-$.ajax({
-    url: 'data/ethanol.pdb',
-    success: function(data){
-        return;
-        
-        
-        var s = 50;
-        var result = parse_pdb(data);
-        //console.log(result);
-        var atoms = result.atoms;
-        var moleculeWrapper = $('<div/>').addClass('wrapper');
-        var con = $('<div/>').addClass('rot');
-        moleculeWrapper.append(con);
-
-        
-        /*for(var i = -5; i < 5; i++){
-            wrapper.append($('<div/>').css({
-                width: 400,
-                height: 400,
-                background: '#fff',
-                opacity: 0.05,
-                '-webkit-transform': 'translate3d(0px, 0px, ' + (i*s) + 'px)'
-            }))
-        }*/
-        
-        for(var i = 0; i < atoms.length; i++){
-            var atom = atoms[i];
             
-            var rgbColor = 'rgb(' + atom[3].join(", ") + ')';
-            console.log(atom, rgbColor);
-            con.append(
-                $('<div/>').html('<div></div><div></div><div></div>')
-                .addClass('atom')
-                .css('-webkit-transform', 'translate3d(' + (atom[0]*s - 10) + 'px, ' + (atom[1]*s - 10) + 'px, ' + (atom[2]*s) + 'px)')
-                .css('background-color', rgbColor)
-            );
+            .atom div {
+                width: 20px;
+                height: 20px;
+                -webkit-border-radius: 10px;
+                background: inherit;
+                -webkit-transform-style: preserve-3d;
+                background-image: -webkit-gradient( radial, 10 10, 10, 0 0, 5, from(rgba(0,0,0,0.2)), to(rgba(255,255,255,0.5)) ); 
+            }
+                    
+            .atom div:nth-child(1) {
+                -webkit-transform: rotateY(-90deg);
+            }
             
-        }
-        
-        var bonds = result.bonds;
-        for(var i = 0; i < bonds.length; i++){
-            var bond = bonds[i];
-            var a1 = atoms[bond[0]];
-            var a2 = atoms[bond[1]];
-            var p1 = {
-                x: a1[0]*s,
-                y: a1[1]*s,
-                z: a1[2]*s
-            };
-            var p2 = {
-                x: a2[0]*s,
-                y: a2[1]*s,
-                z: a2[2]*s
-            };
-
-            var v = {
-                x: p2.x - p1.x,
-                y: p2.y - p1.y,
-                z: p2.z - p1.z
-            };
-            var r = Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2) + Math.pow(v.z, 2));
-            var zRot = Math.atan2(v.y, v.x);
-            var yRot = Math.PI/2 - Math.acos(v.z / r);
+            .atom div:nth-child(2) {
+                -webkit-transform: rotateZ(-90deg) rotateY(90deg);
+            }
+            .
             
-            con.append(
-                $('<div/>').addClass('lineWrapper').css('-webkit-transform', 'translate3d('+p1.x+'px, '+p1.y+'px, '+p1.z+'px)')
-                    .append($('<div/>').addClass('lineZ').css('-webkit-transform', 'rotateZ('+zRot+'rad)')
-                        .append($('<div/>').addClass('lineY').css('-webkit-transform', 'rotateY('+yRot+'rad)')
-                            .append($('<div/>').addClass('line').css('width', r))
-                            .append($('<div/>').addClass('line').css('width', r))
-                        )
-                    )
-            );    
-        }
-        
-        
-        $('#molecule').append(moleculeWrapper);
-        /*var rotate = $('.rot')[0];  
-        var last, x = 0, y = 0;    
-        $(document).mousemove(function(e){
-           var p = {x: e.pageX, y: e.pageY};
-           if(last){
-               x += p.x - last.x;
-               y += p.y - last.y;
-               //console.log('rotateX('+x+'deg) rotateY('+y+'deg)')
-               rotate.style.webkitTransform = 'rotateX('+y+'deg) rotateY('+x+'deg)';
-           } 
-           last = p;
-           
-        });*/
-       
-       
-    
+            .bond {
+                -webkit-transform-origin: 0 0;
+            }
 
-        
-    }
-})
-
-
-/*console.log($('.wrapper'))
-$('.wrapper')
-    .append($('<div/>').addClass('x axis').text('x'))
-    .append($('<div/>').addClass('y axis').text('y'))
-    .append($('<div/>').addClass('z axis').text('z'))
-    .append($('<div/>').addClass('p1'))
-    .append($('<div/>').addClass('p2'))
-    
-    .append($('<div/>').addClass('lineWrapper')
-        .append($('<div/>').addClass('lineZ')
-
-                .append($('<div/>').addClass('lineY')
-                    .append($('<div/>').addClass('line'))
-                    .append($('<div/>').addClass('line'))
-                )
+            .line {
+                height: 3px;
+                background: orange;
+                -webkit-transform-origin: 0 0;
+            }
             
-        )
-    )
-    ;*/
-
-
-
-/*var xRotEl = $('.lineY')[0];
-var xRot = 0;
-$(document).keydown(function(e){
-    switch(e.keyCode){
-        case 38:
-        //console.log('up')
-        xRotEl.style.webkitTransform = 'rotateY('+(xRot+=3)+'deg)';
-        break;
+            .line:nth-child(2){
+                -webkit-transform: rotateX(90deg);
+            }
+            
+            .lineX {
+                
+                -webkit-transform-origin: 0 0;
+                -webkit-transform: rotateX(0deg);
+                -webkit-transform-style: preserve-3d;
+            }
+            
+            .lineY {
+                
+                -webkit-transform-origin: 0 0;
+                -webkit-transform-style: preserve-3d;
+            }
+            
+            .lineZ {       
+                -webkit-transform-origin: 0 0;
+                -webkit-transform-style: preserve-3d;
+            }
+            
+            .lineWrapper {
+                -webkit-transform-style: preserve-3d;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="molecule"></div>
+        <div id="menu"></div>
         
-        case 40:
-        //console.log('down')
-        xRotEl.style.webkitTransform = 'rotateY('+(xRot-=3)+'deg)';
-        break;
-    }
-})*/
-</script>
+        <script type="text/javascript">
+            
+            touchstart = 'ontouchstart' in document.documentElement ? 'touchstart' : 'mousedown';
+            touchmove = 'ontouchmove' in document.documentElement ? 'touchmove' : 'mousemove';
+            touchend = 'ontouchend' in document.documentElement ? 'touchend' : 'mouseup';
+            
+            document.addEventListener('touchmove', function(e){
+                e.preventDefault();
+            });
+            
+            var startPoint, at;
+            document.addEventListener(touchstart, function(_e){
+                var e = _e.changedTouches ? _e.changedTouches[0] : _e;
+                startPoint = {
+                    x: e.pageX,
+                    y: e.pageY
+                };
+                at = +new Date();
+            });
+            document.addEventListener(touchend, function(_e){
+                var e = _e.changedTouches ? _e.changedTouches[0] : _e;
+                spin(e.pageX - startPoint.x, e.pageY - startPoint.y, +new Date() - at);
+            });
+            
+            function spin(dx, dy, dt){
+                var s = 200;
+                var tScale = 10;
+                var rot = $('.rot')[0];
+                if (rot) {
+                    var rotY = dx / dt * s;
+                    var rotX = dy / dt * s;
+                    
+                    var theTransform = window.getComputedStyle(rot).webkitTransform;
+                    var matrix = new WebKitCSSMatrix(theTransform);
+                    rot.style.webkitTransform = matrix.rotate(rotX, rotY, 0);
+                }
+            }
+            
+            var menu = MENU_MAP;
+            
+            var optGroup;
+            var select = $('<select/>');
+            for (var mol in menu) {
+                if (menu[mol] == 0) {
+                    optGroup = $('<optgroup/>').attr('label', mol).appendTo(select);
+                }
+                else {
+                    optGroup.append($('<option/>').val(menu[mol]).text(mol));
+                }
+            }
+            select.appendTo($('#menu'));
+            select.change(function(e){
+                var moleculeFile = $(this).val(), type = moleculeFile.match(/\.(\w+)$/)[1];
+                
+                $.ajax({
+                    url: '/proxy.php',
+                    data: {
+                        url: 'http://alteredqualia.com/canvasmol/data/' + moleculeFile
+                    },
+                    success: function(data){
+                        renderMolecule(data, type);
+                    }
+                });
+            }).find('option[value=ethanol.pdb]').attr('selected', 'selected').trigger('change');
+            
+            
+            function renderMolecule(data, type){
+            
+                var s = 50;
+                
+                var typeMap = {
+                    sdf: 'sdf',
+                    mol: 'sdf',
+                    pdb: 'pdb'
+                };
+                var result = window['parse_' + typeMap[type]](data);
+                var atoms = result.atoms;
+                var moleculeWrapper = $('<div/>').addClass('wrapper');
+                var con = $('<div/>').addClass('rot');
+                moleculeWrapper.append(con);
+                
+                
+                var atomX = [],
+                    atomY = [],
+                    atomZ = [];
+                
+                for (var i = 0; i < atoms.length; i++) {
+                    var atom = atoms[i];
+                    var rgbColor = 'rgb(' + atom[3].join(", ") + ')';
+                    con.append($('<div/>').html('<div></div><div></div><div></div>').addClass('atom').css('-webkit-transform', 'translate3d(' + (atom[0] * s - 10) + 'px, ' + (atom[1] * s - 10) + 'px, ' + (atom[2] * s) + 'px)').css('background-color', rgbColor));
+                    atomX.push(atom[0]);
+                    atomY.push(atom[1]);
+                    atomZ.push(atom[2]);
+                }
+                
+                // Try fixing scaling and position
+                var maxX = Math.max.apply({}, atomX) * s,
+                    minX = Math.min.apply({}, atomX) * s,
+                    
+                    maxY = Math.max.apply({}, atomY) * s,
+                    minY = Math.min.apply({}, atomY) * s,
+                    
+                    maxZ = Math.max.apply({}, atomZ) * s,
+                    minZ = Math.min.apply({}, atomZ) * s;
 
+                var dx = -(maxX - minX)/2 - minX;
+                var dy = -(maxY - minY)/2 - minY;
+                var dz = -(maxZ - minZ)/2 - minZ;
 
-<script type="text/javascript">
-        var menu = {
-
-"Simple"    :0,   
-
-"Anandamide":"anandamide.sdf",
-"Aspirin"   :"aspirin.pdb",
-"ATP"       :"atp.pdb",   
-
-"Caffeine"  :"caffeine.pdb",
-"Capsaicin" :"capsaicin.pdb",
-"Carotene"  :"carotene.mol",
-"Chlorophyll":"chlorophyll.mol",
-"Cholesterol":"cholesterol.pdb",
-"Cocaine"   :"cocaine.sdf",   
-
-"Cubane"    :"cubane.pdb",
-"Ethanol"   :"ethanol.pdb",
-"Fructose"  :"fructose.sdf",   
-
-"Glucose"   :"glucose.sdf",   
-
-"LSD"       :"lsd.pdb",
-"Lycopene"  :"lycopene.pdb",   
-
-"MDMA"      :"mdma.sdf",   
-
-"Morphine"  :"morphine.sdf",
-"Nicotine"  :"nicotine.pdb",   
-
-"Oxytocin"  :"oxytocin.sdf",
-"Penicillin":"penicillin.sdf",
-"Sildenafil":"sildenafil.sdf",   
-
-"Strychnine":"strychnine.sdf",   
-
-"Teflon"    :"ptfe.sdf",
-"THC"       :"thc.sdf",
-"TNT"       :"tnt.sdf",
-
-"Crystals"  :0,
-"Aluminium oxide":"Al2O3.pdb",
-"Copper"    :"cu.pdb",
-"Fluorite"  :"caf2.pdb",
-"Salt"      :"nacl.pdb",
-"YBCO superconductor":"ybco.pdb",
-
-"Carbon"    :0,   
-
-"Diamond"   :"diamond.pdb",
-"Graphite"  :"graphite.pdb",
-"Buckyball" :"c60.sdf",
-"Buckytube" :"nanotube.sdf",
-   
-
-"Bio"       :0,
-
-"Daptomycin"        :"daptomycin.pdb",
-"DNA"               :"dna.sdf",
-"DNA crystal"       :"3GBI.pdb",
-"Transfer RNA"      :"4TNA.pdb",
-"Adenovirus"        :"adenovirus.pdb",
-"Black beetle virus"  :"2bbv.pdb",
-"Tobacco mosaic virus":"2OM3.pdb",
-"Cyclosporin complex":"2X2C.pdb",
-"KaiC protein"       :"2GBL.pdb",
-"Human prion protein":"1OEI.pdb",
-"Cadherin"           :"1L3W.pdb",
-"Taq polymerase"     :"2GHO.pdb"
-
-};
-
-var optGroup;
-var select = $('<select/>');
-for(var mol in menu){
-    if(menu[mol] == 0){
-        optGroup = $('<optgroup/>').attr('label', mol).appendTo(select);
-    } else {
-        optGroup.append($('<option/>').val(menu[mol]).text(mol));
-    }
-}
-select.appendTo($('#menu'));
-select.change(function(e){
-    var moleculeFile = $(this).val(),
-        type = moleculeFile.match(/\.(\w+)$/)[1];
-
-    $.ajax({
-        url: '/proxy.php',
-        data: {
-            url: 'http://alteredqualia.com/canvasmol/data/'+moleculeFile
-        },
-        success: function(data){
-            renderMolecule(data, type);
-        }
-    });
-}).trigger('change');
-
-
-function renderMolecule(data, type){
-    
-    var s = 50;
-    var result = window['parse_' + type](data);
-    var atoms = result.atoms;
-    var moleculeWrapper = $('<div/>').addClass('wrapper');
-    var con = $('<div/>').addClass('rot');
-    moleculeWrapper.append(con);
-    
-    for(var i = 0; i < atoms.length; i++){
-        var atom = atoms[i];            
-        var rgbColor = 'rgb(' + atom[3].join(", ") + ')';
-        con.append(
-            $('<div/>').html('<div></div><div></div><div></div>')
-            .addClass('atom')
-            .css('-webkit-transform', 'translate3d(' + (atom[0]*s - 10) + 'px, ' + (atom[1]*s - 10) + 'px, ' + (atom[2]*s) + 'px)')
-            .css('background-color', rgbColor)
-        );
-        
-    }
-    
-    var bonds = result.bonds;
-    for(var i = 0; i < bonds.length; i++){
-        var bond = bonds[i];
-        var a1 = atoms[bond[0]];
-        var a2 = atoms[bond[1]];
-        var p1 = {
-            x: a1[0]*s,
-            y: a1[1]*s,
-            z: a1[2]*s
-        };
-        var p2 = {
-            x: a2[0]*s,
-            y: a2[1]*s,
-            z: a2[2]*s
-        };
-
-        var v = {
-            x: p2.x - p1.x,
-            y: p2.y - p1.y,
-            z: p2.z - p1.z
-        };
-        var r = Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2) + Math.pow(v.z, 2));
-        var zRot = Math.atan2(v.y, v.x);
-        var yRot = Math.PI/2 - Math.acos(v.z / r);
-        
-        con.append(
-            $('<div/>').addClass('lineWrapper').css('-webkit-transform', 'translate3d('+p1.x+'px, '+p1.y+'px, '+p1.z+'px)')
-                .append($('<div/>').addClass('lineZ').css('-webkit-transform', 'rotateZ('+zRot+'rad)')
-                    .append($('<div/>').addClass('lineY').css('-webkit-transform', 'rotateY('+yRot+'rad)')
-                        .append($('<div/>').addClass('line').css('width', r))
-                        .append($('<div/>').addClass('line').css('width', r))
-                    )
-                )
-        );    
-    }
-    
-    var matrix;
-    moleculeWrapper[0].addEventListener('gesturestart', function(e){
-        var theTransform = window.getComputedStyle(this).webkitTransform;
-        matrix = new WebKitCSSMatrix(theTransform);
-    }, false)
-    
-    moleculeWrapper[0].addEventListener('gesturechange', function(e){
-        this.style.webkitTransform = matrix.scale(e.scale);
-    }, false)
-    
-    $('#molecule').empty().append(moleculeWrapper);
-}
-
-    </script>
-</body></html>
+                var scaling = Math.min(1, Math.min(screen.width / (maxX-minX), screen.height / (maxY-minY)) * 0.6);
+                moleculeWrapper.css('-webkit-transform', 'scale('+scaling+')');
+                
+                con.css('-webkit-transform', 'translate3d('+dx+'px, '+dy+'px, '+dz+'px)');
+                con.css('-webkit-transform-origin', -dx + 'px ' + -dy + 'px ' + -dz + 'px');
+                
+                
+                // Create bonds
+                var bonds = result.bonds;
+                for (var i = 0; i < bonds.length; i++) {
+                    var bond = bonds[i];
+                    var a1 = atoms[bond[0]];
+                    var a2 = atoms[bond[1]];
+                    var p1 = {
+                        x: a1[0] * s,
+                        y: a1[1] * s,
+                        z: a1[2] * s
+                    };
+                    var p2 = {
+                        x: a2[0] * s,
+                        y: a2[1] * s,
+                        z: a2[2] * s
+                    };
+                    
+                    var v = {
+                        x: p2.x - p1.x,
+                        y: p2.y - p1.y,
+                        z: p2.z - p1.z
+                    };
+                    var r = Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2) + Math.pow(v.z, 2));
+                    var zRot = Math.atan2(v.y, v.x);
+                    var yRot = Math.PI / 2 - Math.acos(v.z / r);
+                    
+                    con.append($('<div/>').addClass('lineWrapper').css('-webkit-transform', 'translate3d(' + p1.x + 'px, ' + p1.y + 'px, ' + p1.z + 'px)').append($('<div/>').addClass('lineZ').css('-webkit-transform', 'rotateZ(' + zRot + 'rad)').append($('<div/>').addClass('lineY').css('-webkit-transform', 'rotateY(' + yRot + 'rad)').append($('<div/>').addClass('line').css('width', r)).append($('<div/>').addClass('line').css('width', r)))));
+                }
+                
+                var matrix;
+                moleculeWrapper[0].addEventListener('gesturestart', function(e){
+                    var theTransform = window.getComputedStyle(this).webkitTransform;
+                    matrix = new WebKitCSSMatrix(theTransform);
+                }, false)
+                
+                moleculeWrapper[0].addEventListener('gesturechange', function(e){
+                    this.style.webkitTransform = matrix.scale(e.scale);
+                }, false)
+                
+                $('#molecule').empty().append(moleculeWrapper);
+            }
+        </script>
+    </body>
+</html>
