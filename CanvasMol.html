@@ -1,26 +1,109 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html><head>
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
-
+<meta name="viewport" content="width=device-width; minimum-scale=0.5; maximum-scale=2.0; initial-scale=1.0"/>
 
     <title>CanvasMol</title>
     
-    <link type="text/css" rel="stylesheet" 
-href="CanvasMol-filer/canvasmol.css">
+    <link type="text/css" rel="stylesheet" href="CanvasMol-filer/canvasmol.css">
     
     <script type="text/javascript" src="CanvasMol-filer/jquery-1.js"></script>
     <script type="text/javascript" src="CanvasMol-filer/jquery-ui-1.js"></script>
     <script type="text/javascript" src="CanvasMol-filer/canvasmol.js"></script>
     
+    <script type="text/javascript">
+        var menu = {
+
+"Simple"    :0,   
+
+"Anandamide":"anandamide.sdf",
+"Aspirin"   :"aspirin.pdb",
+"ATP"       :"atp.pdb",   
+
+"Caffeine"  :"caffeine.pdb",
+"Capsaicin" :"capsaicin.pdb",
+"Carotene"  :"carotene.mol",
+"Chlorophyll":"chlorophyll.mol",
+"Cholesterol":"cholesterol.pdb",
+"Cocaine"   :"cocaine.sdf",   
+
+"Cubane"    :"cubane.pdb",
+"Ethanol"   :"ethanol.pdb",
+"Fructose"  :"fructose.sdf",   
+
+"Glucose"   :"glucose.sdf",   
+
+"LSD"       :"lsd.pdb",
+"Lycopene"  :"lycopene.pdb",   
+
+"MDMA"      :"mdma.sdf",   
+
+"Morphine"  :"morphine.sdf",
+"Nicotine"  :"nicotine.pdb",   
+
+"Oxytocin"  :"oxytocin.sdf",
+"Penicillin":"penicillin.sdf",
+"Sildenafil":"sildenafil.sdf",   
+
+"Strychnine":"strychnine.sdf",   
+
+"Teflon"    :"ptfe.sdf",
+"THC"       :"thc.sdf",
+"TNT"       :"tnt.sdf",
+
+"Crystals"  :0,
+"Aluminium oxide":"Al2O3.pdb",
+"Copper"    :"cu.pdb",
+"Fluorite"  :"caf2.pdb",
+"Salt"      :"nacl.pdb",
+"YBCO superconductor":"ybco.pdb",
+
+"Carbon"    :0,   
+
+"Diamond"   :"diamond.pdb",
+"Graphite"  :"graphite.pdb",
+"Buckyball" :"c60.sdf",
+"Buckytube" :"nanotube.sdf",
+   
+
+"Bio"       :0,
+
+"Daptomycin"        :"daptomycin.pdb",
+"DNA"               :"dna.sdf",
+"DNA crystal"       :"3GBI.pdb",
+"Transfer RNA"      :"4TNA.pdb",
+"Adenovirus"        :"adenovirus.pdb",
+"Black beetle virus"  :"2bbv.pdb",
+"Tobacco mosaic virus":"2OM3.pdb",
+"Cyclosporin complex":"2X2C.pdb",
+"KaiC protein"       :"2GBL.pdb",
+"Human prion protein":"1OEI.pdb",
+"Cadherin"           :"1L3W.pdb",
+"Taq polymerase"     :"2GHO.pdb"
+
+}
+    </script>
+    
+    
     <style type="text/css">
+        html, body, .wrapper {
+            width: 100%;
+            height: 100%;
+        }
+        
         .rot {
             /*-webkit-animation: rot 3s 4 linear;*/
+            -webkit-transition-property: -webkit-transform;
+            -webkit-transition-duration: 1.5s;
+            -webkit-transition-timing-function : ease-out;
+            -webkit-transition-delay: 0;
+            
             -webkit-transform-style: preserve-3d;
             -webkit-transform-origin: 0.5 0.5;
             /*background: #00f;*/
             position: absolute;
-            top: 100px;
-            left: 100px;
+            top: 50%;
+            left: 50%;
         
         }
         
@@ -462,22 +545,36 @@ touchend = 'ontouchend' in document.documentElement ? 'touchend' : 'mouseup';
     
 document.addEventListener('touchmove', function(e){ e.preventDefault(); });
 
-var startPoint;
+var startPoint, at;
 document.addEventListener(touchstart, function(_e){
     var e = _e.changedTouches ? _e.changedTouches[0] : _e;
     startPoint = {
         x: e.pageX,
         y: e.pageY
     };
+    at = +new Date();
 });
 document.addEventListener(touchend, function(_e){
     var e = _e.changedTouches ? _e.changedTouches[0] : _e;
-    spin(e.pageX - startPoint.x, e.pageY - startPoint.y);
+    spin(e.pageX - startPoint.x, e.pageY - startPoint.y, +new Date()-at);
 
 });  
 
-function spin(dx, dy){
-    console.log(dx,dy);
+function spin(dx, dy, dt){
+    var s = 100;
+    var tScale = 10;
+    //console.log(dx,dy,dt);
+    var rot = $('.rot')[0];
+    var rotY = dx/dt * s;
+    var rotX = dy/dt * s;
+   
+    
+    var theTransform = window.getComputedStyle(rot).webkitTransform;
+    var matrix = new WebKitCSSMatrix(theTransform);
+    /*console.log(rotX, rotY);*/
+    /*rot.style.webkitTransitionDuration = Math.max(rotY, rotX) * tScale + 'ms';*/
+    rot.style.webkitTransform = matrix.rotate(rotX, rotY, 0);
+    
 }
     
 $.ajax({
@@ -488,7 +585,7 @@ $.ajax({
         
         var s = 50;
         var result = parse_pdb(data);
-        console.log(result);
+        //console.log(result);
         var atoms = result.atoms;
         var wrapper = $('<div/>').addClass('wrapper');
         var con = $('<div/>').addClass('rot');
