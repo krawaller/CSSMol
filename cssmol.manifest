@@ -1,0 +1,18 @@
+CACHE MANIFEST
+# CSSMol manifest, version 0.1
+
+# HTML
+index.html
+
+# MOLECULES
+/proxy.php
+
+# JS
+http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js
+canvasmol.js
+
+# PICS
+Icon_CSSMol.png
+Default_CSSMol.png
+
+NETWORK:

@@ -1,11 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html manifest="cssmol.manifest">
     <head>
         <meta http-equiv="content-type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width; minimum-scale=1.0; maximum-scale=1.0; initial-scale=1.0"/>
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon" href="Icon_CSSMol.png" />
+        <link rel="apple-touch-startup-image" href="Default_CSSMol.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+        
         <title>CSSMol</title>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-        <script type="text/javascript" src="CanvasMol-filer/canvasmol.js"></script>
+        <script type="text/javascript" src="canvasmol.js"></script>
         <style type="text/css">
             html, body, #molecule, .wrapper {
                 width: 100%;
@@ -36,7 +41,7 @@
                 -webkit-border-radius: 10px;
                 background: inherit;
                 -webkit-transform-style: preserve-3d;
-                background-image: -webkit-gradient( radial, 10 10, 10, 0 0, 5, from(rgba(0,0,0,0.2)), to(rgba(255,255,255,0.5)) ); 
+                /*background-image: -webkit-gradient( radial, 10 10, 10, 0 0, 5, from(rgba(0,0,0,0.2)), to(rgba(255,255,255,0.5)) );*/ 
             }
                     
             .atom div:nth-child(1) {
@@ -156,7 +161,7 @@
             
             
             function renderMolecule(data, type){
-            
+                console.time('render');
                 var s = 50;
                 
                 var typeMap = {
@@ -175,10 +180,21 @@
                     atomY = [],
                     atomZ = [];
                 
-                for (var i = 0; i < atoms.length; i++) {
+                // Slow
+                /*for (var i = 0, len = atoms.length; i < len; i++) {
                     var atom = atoms[i];
                     var rgbColor = 'rgb(' + atom[3].join(", ") + ')';
                     con.append($('<div/>').html('<div></div><div></div><div></div>').addClass('atom').css('-webkit-transform', 'translate3d(' + (atom[0] * s - 10) + 'px, ' + (atom[1] * s - 10) + 'px, ' + (atom[2] * s) + 'px)').css('background-color', rgbColor));
+                    atomX.push(atom[0]);
+                    atomY.push(atom[1]);
+                    atomZ.push(atom[2]);
+                }*/
+                
+                var els = [], atom, rgbColor;
+                for (var i = 0, len = atoms.length; i < len; i++) {
+                    atom = atoms[i];
+                    rgbColor = 'rgb(' + atom[3].join(", ") + ')';
+                    els.push('<div class="atom" style="-webkit-transform: translate3d(' + (atom[0] * s - 10) + 'px, ' + (atom[1] * s - 10) + 'px, ' + (atom[2] * s) + 'px); background-color: '+rgbColor+';"><div></div><div></div><div></div></div>');
                     atomX.push(atom[0]);
                     atomY.push(atom[1]);
                     atomZ.push(atom[2]);
@@ -204,9 +220,9 @@
                 con.css('-webkit-transform', 'translate3d('+dx+'px, '+dy+'px, '+dz+'px)');
                 con.css('-webkit-transform-origin', -dx + 'px ' + -dy + 'px ' + -dz + 'px');
                 
-                
+                // Slow
                 // Create bonds
-                var bonds = result.bonds;
+                /*var bonds = result.bonds;
                 for (var i = 0; i < bonds.length; i++) {
                     var bond = bonds[i];
                     var a1 = atoms[bond[0]];
@@ -232,7 +248,38 @@
                     var yRot = Math.PI / 2 - Math.acos(v.z / r);
                     
                     con.append($('<div/>').addClass('lineWrapper').css('-webkit-transform', 'translate3d(' + p1.x + 'px, ' + p1.y + 'px, ' + p1.z + 'px)').append($('<div/>').addClass('lineZ').css('-webkit-transform', 'rotateZ(' + zRot + 'rad)').append($('<div/>').addClass('lineY').css('-webkit-transform', 'rotateY(' + yRot + 'rad)').append($('<div/>').addClass('line').css('width', r)).append($('<div/>').addClass('line').css('width', r)))));
+                }*/
+                
+                // Create bonds
+                var bonds = result.bonds;
+                for (var i = 0, len = bonds.length; i < len; i++) {
+                    var bond = bonds[i];
+                    var a1 = atoms[bond[0]];
+                    var a2 = atoms[bond[1]];
+                    var p1 = {
+                        x: a1[0] * s,
+                        y: a1[1] * s,
+                        z: a1[2] * s
+                    };
+                    var p2 = {
+                        x: a2[0] * s,
+                        y: a2[1] * s,
+                        z: a2[2] * s
+                    };
+                    
+                    var v = {
+                        x: p2.x - p1.x,
+                        y: p2.y - p1.y,
+                        z: p2.z - p1.z
+                    };
+                    var r = Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2) + Math.pow(v.z, 2));
+                    var zRot = Math.atan2(v.y, v.x);
+                    var yRot = Math.PI / 2 - Math.acos(v.z / r);
+                    
+                    els.push('<div class="lineWrapper" style="-webkit-transform: translate3d(' + p1.x + 'px, ' + p1.y + 'px, ' + p1.z + 'px);"><div class="lineZ" style="-webkit-transform: rotateZ(' + zRot + 'rad);"><div class="lineY" style="-webkit-transform: rotateY(' + yRot + 'rad);"><div class="line" style="width: '+r+'px;"></div><div class="line" style="width: '+r+'px;"></div></div></div></div>');
                 }
+                con[0].innerHTML = els.join("");
+                console.timeEnd('render');
                 
                 var matrix;
                 moleculeWrapper[0].addEventListener('gesturestart', function(e){
