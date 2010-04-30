@@ -203,6 +203,12 @@
                     pdb: 'pdb'
                 };
                 var result = window['parse_' + typeMap[type]](data);
+                if (result.atoms.length + result.bonds.length > 250) {
+                    if (!confirm("This molecule consists of " + result.atoms.length + " atoms and " + result.bonds.length + " bonds. This might be really slow to render on small device!")) {
+                        return;
+                    }
+                }
+                
                 var atoms = result.atoms;
                 var moleculeWrapper = $('<div/>').addClass('wrapper');
                 var con = $('<div/>').addClass('rot');
@@ -238,7 +244,6 @@
                 var dz = -(maxZ - minZ)/2 - minZ;
 
                 var scaling = Math.min(1, Math.min(screen.width / (maxX-minX), screen.height / (maxY-minY)) * 0.6);
-                console.log([screen.width, screen.height])
                 moleculeWrapper.css('-webkit-transform', 'scale('+scaling+')');
                 
                 con.css('-webkit-transform', 'translate3d('+dx+'px, '+dy+'px, '+dz+'px)');
@@ -268,8 +273,7 @@
                     };
                     var r = Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2) + Math.pow(v.z, 2));
                     var zRot = Math.atan2(v.y, v.x);
-                    var yRot = Math.PI / 2 - Math.acos(v.z / r);
-                    console.log('yRot', yRot*(180/Math.PI))
+                    var yRot = -(Math.PI / 2 - Math.acos(v.z / r));
                     
                     els.push('<div class="lineWrapper" style="-webkit-transform: translate3d(' + p1.x + 'px, ' + p1.y + 'px, ' + p1.z + 'px);"><div class="lineZ" style="-webkit-transform: rotateZ(' + zRot + 'rad);"><div class="lineY" style="-webkit-transform: rotateY(' + yRot + 'rad);"><div class="line" style="width: '+r+'px;"></div><div class="line" style="width: '+r+'px;"></div></div></div></div>');
                 }
