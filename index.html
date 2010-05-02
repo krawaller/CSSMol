@@ -10,17 +10,18 @@
         
         <title>CSSMol</title>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-        <script type="text/javascript" src="http://alteredqualia.com/canvasmol/js/canvasmol.js"></script>
+        <!--script type="text/javascript" src="http://alteredqualia.com/canvasmol/js/canvasmol.js"></script-->
+        <script type="text/javascript" src="canvasmol.js"></script>
         <style type="text/css">
             
-            html, body, #molecule, .wrapper {
+            html, body, #cssmol, .wrapper {
                 width: 100%;
                 height: 100%;
                 background: #000;
                 margin: 0;
                 padding: 0;
             }
-            #molecule * {
+            #cssmol * {
                 position: absolute;
             }
             
@@ -31,6 +32,10 @@
                 top: 50%;
                 left: 50%;
             }
+            
+            /*.dragging .rot {
+                -webkit-transition: none;
+            }*/
             
             .atom {
                 -webkit-transform-style: preserve-3d;
@@ -113,7 +118,7 @@
         </style>
     </head>
     <body>
-        <div id="molecule"></div>
+        <div id="cssmol"></div>
         <div class="settings">
             <div id="menu"></div>
             <label for="lightweight">
@@ -121,176 +126,252 @@
             </label>
             <input type="checkbox" id="lightweight" name="lightweight" />
         </div>
-        <script type="text/javascript">
-            
-            touchstart = 'ontouchstart' in document.documentElement ? 'touchstart' : 'mousedown';
-            touchmove = 'ontouchmove' in document.documentElement ? 'touchmove' : 'mousemove';
-            touchend = 'ontouchend' in document.documentElement ? 'touchend' : 'mouseup';
-            
-            document.addEventListener('touchmove', function(e){
-                e.preventDefault();
-            });
-            
-            var startPoint, at;
-            document.addEventListener(touchstart, function(_e){
-                var e = _e.changedTouches ? _e.changedTouches[0] : _e;
-                startPoint = {
-                    x: e.pageX,
-                    y: e.pageY
-                };
-                at = +new Date();
-            });
-            document.addEventListener(touchend, function(_e){
-                var e = _e.changedTouches ? _e.changedTouches[0] : _e;
-                spin(e.pageX - startPoint.x, e.pageY - startPoint.y, +new Date() - at);
-            });
-            
-            function spin(dx, dy, dt){
-                var s = 100;
-                var tScale = 10;
-                var rot = $('.rot')[0];
-                if (rot) {
-                    var rotY = Math.min(Math.max(-180, dx / dt * s), 180);
-                    var rotX = Math.min(Math.max(-180, dy / dt * s), 180);
-                    
-                    var theTransform = window.getComputedStyle(rot).webkitTransform;
-                    var matrix = new WebKitCSSMatrix(theTransform);
-                    rot.style.webkitTransform = matrix.rotate(rotX, rotY, 0);
-                }
-            }
-            
-            var menu = MENU_MAP;
-            
-            var optGroup;
-            var select = $('<select/>');
-            for (var mol in menu) {
-                if (menu[mol] == 0) {
-                    optGroup = $('<optgroup/>').attr('label', mol).appendTo(select);
-                }
-                else {
-                    optGroup.append($('<option/>').val(menu[mol]).text(mol));
-                }
-            }
-            select.appendTo($('#menu'));
-            select.change(function(e){
-                var moleculeFile = $(this).val(), type = moleculeFile.match(/\.(\w+)$/)[1];
+        <script type="text/javascript">        
+            var CSSMol = {
+                init: function(){
+                    this.initEvents();
+                    this.initMenu();
+                },
                 
-                $.ajax({
-                    url: '/proxy.php',
-                    data: {
-                        url: 'http://alteredqualia.com/canvasmol/data/' + moleculeFile
+                initMenu: function(){
+                    var self = this;
+                    var menu = MENU_MAP;
+            
+                    var optGroup;
+                    var select = $('<select/>');
+                    for (var mol in menu) {
+                        if (menu[mol] == 0) {
+                            optGroup = $('<optgroup/>').attr('label', mol).appendTo(select);
+                        }
+                        else {
+                            optGroup.append($('<option/>').val(menu[mol]).text(mol));
+                        }
+                    }
+                    select.appendTo($('#menu'));
+                    select.change(function(e){
+                        var moleculeFile = $(this).val(), type = moleculeFile.match(/\.(\w+)$/)[1];
+                        
+                        $.ajax({
+                            url: '/proxy.php',
+                            data: {
+                                url: 'http://alteredqualia.com/canvasmol/data/' + moleculeFile
+                            },
+                            success: function(data){
+                                self.render(data, type);
+                            }
+                        });
+                    }).find('option[value=ethanol.pdb]').attr('selected', 'selected').trigger('change');
+                    
+                    $('#lightweight').change(function(e){
+                        if($(this).attr('checked')){
+                            $('body').addClass('lightweight');
+                        } else {
+                            $('body').removeClass('lightweight');
+                        }                   
+                    });
+                },
+                
+                initEvents: function(){
+                    for(var event in this.events){
+                        document.addEventListener(this.eventBridge[event] ||  event, this.utils.bind(this.events[event], this), false);
+                    }
+                },
+                
+                eventBridge: {
+                    touchstart: 'ontouchstart' in document.documentElement ? 'touchstart' : 'mousedown',
+                    touchmove: 'ontouchmove' in document.documentElement ? 'touchmove' : 'mousemove',
+                    touchend: 'ontouchend' in document.documentElement ? 'touchend' : 'mouseup'
+                },
+                
+                touch: {
+                    point: null,
+                    at: null,
+                    matrix: null,
+                    dragging: false    
+                },
+                
+                dom: {
+                    moleculeWrapper: null,
+                    $cssmol: $('#cssmol'),
+                    rot: null
+                },
+                
+                events: {
+                    touchstart: function(_e){
+                        var e = _e.changedTouches ? _e.changedTouches[0] : _e;
+                        this.touch.point = {
+                            x: e.pageX,
+                            y: e.pageY
+                        };
+                        this.touch.at = +new Date();                      
+                        this.touch.matrix = new WebKitCSSMatrix(window.getComputedStyle(this.dom.rot).webkitTransform);
+                        this.touch.dragging = true;
+                        this.dom.$cssmol.addClass('dragging');
                     },
-                    success: function(data){
-                        renderMolecule(data, type);
+                    
+                    touchmove: function(_e){
+                        if (this.touch.dragging) {
+                            _e.preventDefault();
+                            var e = _e.changedTouches ? _e.changedTouches[0] : _e;
+                            var point = {
+                                x: e.pageX,
+                                y: e.pageY
+                            };
+                            var at = +new Date();
+                            this.spin(e.pageX - this.touch.point.x, e.pageY - this.touch.point.y);
+                            this.touch.point = point;
+                            this.touch.at = at;
+                        }
+                        
+                    },
+                    
+                    touchend: function(_e){
+                        this.touch.dragging = false;
+                        this.dom.$cssmol.removeClass('dragging');
+                        var e = _e.changedTouches ? _e.changedTouches[0] : _e;
+                        this.spin(e.pageX - this.touch.point.x, e.pageY - this.touch.point.y, +new Date() - this.touch.at);
+                    },
+                    
+                    /*var matrix;
+                    moleculeWrapper[0].addEventListener('gesturestart', function(e){
+                        var theTransform = window.getComputedStyle(this).webkitTransform;
+                        matrix = new WebKitCSSMatrix(theTransform);
+                    }, false)
+                    
+                    moleculeWrapper[0].addEventListener('gesturechange', function(e){
+                        
+                    }, false)*/
+                    
+                    gesturestart: function(){
+                    
+                    },
+                    
+                    gesturechange: function(e){
+                        //console.log(e.scale);
+                        //this.dom.moleculeWrapper.style.webkitTransform = this.touch.matrix.scale(e.scale);
+                    },
+                    
+                    gestureend: function(){
+                    
                     }
-                });
-            }).find('option[value=ethanol.pdb]').attr('selected', 'selected').trigger('change');
+                },
+                
+                spin: function(dx, dy, dt){
+                    //console.log('spinning', dx, dy, dt)
+                    
+                    var s = 100;
+                    var tScale = 10;
+                    var dt = dt ||  100;
+ 
+                    if (this.dom.rot) {
+                        var rotY = Math.min(Math.max(-180, dx / dt * s), 180);
+                        var rotX = Math.min(Math.max(-180, dy / dt * s), 180);
+                        //console.log('rot', rotY, rotX);
+                        this.dom.rot.style.webkitTransform = this.touch.matrix = this.touch.matrix.rotate(rotX, rotY, 0);
+                    }
+                },
+                
+                render: function(data, type){
+                    var s = 100;
+                    
+                    var typeMap = {
+                        sdf: 'sdf',
+                        mol: 'sdf',
+                        pdb: 'pdb'
+                    };
+                    var result = window['parse_' + typeMap[type]](data);
+                    if (result.atoms.length + result.bonds.length > 250) {
+                        if (!confirm("This molecule consists of " + result.atoms.length + " atoms and " + result.bonds.length + " bonds. This might be really slow to render on small device!")) {
+                            return;
+                        }
+                    }
+                    
+                    var atoms = result.atoms;
+                    var moleculeWrapper = $('<div/>').addClass('wrapper');
+                    this.dom.moleculeWrapper = moleculeWrapper[0];
+                    var con = $('<div/>').addClass('rot');
+                    this.dom.rot = con[0];
+                    moleculeWrapper.append(con);
+                    
+                    
+                    var atomX = [],
+                        atomY = [],
+                        atomZ = [];
+                    
+                    var els = [], atom, rgbColor;
+                    for (var i = 0, len = atoms.length; i < len; i++) {
+                        atom = atoms[i];
+                        rgbColor = 'rgb(' + atom[3].join(", ") + ')';
+                        els.push('<div class="atom" style="-webkit-transform: translate3d(' + (atom[0] * s) + 'px, ' + (atom[1] * s) + 'px, ' + (atom[2] * s) + 'px); background-color: '+rgbColor+';"><div></div><div></div><div></div></div>');
+                        atomX.push(atom[0]);
+                        atomY.push(atom[1]);
+                        atomZ.push(atom[2]);
+                    }
+                    
+                    // Try fixing scaling and position
+                    var maxX = Math.max.apply({}, atomX) * s,
+                        minX = Math.min.apply({}, atomX) * s,
+                        
+                        maxY = Math.max.apply({}, atomY) * s,
+                        minY = Math.min.apply({}, atomY) * s,
+                        
+                        maxZ = Math.max.apply({}, atomZ) * s,
+                        minZ = Math.min.apply({}, atomZ) * s;
+    
+                    var dx = -(maxX - minX)/2 - minX;
+                    var dy = -(maxY - minY)/2 - minY;
+                    var dz = -(maxZ - minZ)/2 - minZ;
+    
+                    var scaling = Math.min(1, Math.min(screen.width / (maxX-minX), screen.height / (maxY-minY)) * 0.6);
+                    moleculeWrapper.css('-webkit-transform', 'scale('+scaling+')');
+                    
+                    con.css('-webkit-transform', 'translate3d('+dx+'px, '+dy+'px, '+dz+'px)');
+                    con.css('-webkit-transform-origin', -dx + 'px ' + -dy + 'px ' + -dz + 'px');
+                    
+                    // Create bonds
+                    var bonds = result.bonds;
+                    for (var i = 0, len = bonds.length; i < len; i++) {
+                        var bond = bonds[i];
+                        var a1 = atoms[bond[0]];
+                        var a2 = atoms[bond[1]];
+                        var p1 = {
+                            x: a1[0] * s,
+                            y: a1[1] * s,
+                            z: a1[2] * s
+                        };
+                        var p2 = {
+                            x: a2[0] * s,
+                            y: a2[1] * s,
+                            z: a2[2] * s
+                        };
+                        
+                        var v = {
+                            x: p2.x - p1.x,
+                            y: p2.y - p1.y,
+                            z: p2.z - p1.z
+                        };
+                        var r = Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2) + Math.pow(v.z, 2));
+                        var zRot = Math.atan2(v.y, v.x);
+                        var yRot = -(Math.PI / 2 - Math.acos(v.z / r));
+                        
+                        els.push('<div class="lineWrapper" style="-webkit-transform: translate3d(' + p1.x + 'px, ' + p1.y + 'px, ' + p1.z + 'px);"><div class="lineZ" style="-webkit-transform: rotateZ(' + zRot + 'rad);"><div class="lineY" style="-webkit-transform: rotateY(' + yRot + 'rad);"><div class="line" style="width: '+r+'px;"></div><div class="line" style="width: '+r+'px;"></div></div></div></div>');
+                    }
+                    con[0].innerHTML = els.join("");
+                    $('#cssmol').empty().append(moleculeWrapper);
+                },
+                
+                utils: {
+                    bind: function(func, scope){
+                        return function(){
+                            return func.apply(scope, Array.prototype.slice.call(arguments));
+                        }
+                    }
+                }
+                
+                    
+            };
             
-            $('#lightweight').change(function(e){
-                if($(this).attr('checked')){
-                    $('body').addClass('lightweight');
-                } else {
-                    $('body').removeClass('lightweight');
-                }                   
-            });
-                 
-            function renderMolecule(data, type){
-                var s = 100;
-                
-                var typeMap = {
-                    sdf: 'sdf',
-                    mol: 'sdf',
-                    pdb: 'pdb'
-                };
-                var result = window['parse_' + typeMap[type]](data);
-                if (result.atoms.length + result.bonds.length > 250) {
-                    if (!confirm("This molecule consists of " + result.atoms.length + " atoms and " + result.bonds.length + " bonds. This might be really slow to render on small device!")) {
-                        return;
-                    }
-                }
-                
-                var atoms = result.atoms;
-                var moleculeWrapper = $('<div/>').addClass('wrapper');
-                var con = $('<div/>').addClass('rot');
-                moleculeWrapper.append(con);
-                
-                
-                var atomX = [],
-                    atomY = [],
-                    atomZ = [];
-                
-                var els = [], atom, rgbColor;
-                for (var i = 0, len = atoms.length; i < len; i++) {
-                    atom = atoms[i];
-                    rgbColor = 'rgb(' + atom[3].join(", ") + ')';
-                    els.push('<div class="atom" style="-webkit-transform: translate3d(' + (atom[0] * s) + 'px, ' + (atom[1] * s) + 'px, ' + (atom[2] * s) + 'px); background-color: '+rgbColor+';"><div></div><div></div><div></div></div>');
-                    atomX.push(atom[0]);
-                    atomY.push(atom[1]);
-                    atomZ.push(atom[2]);
-                }
-                
-                // Try fixing scaling and position
-                var maxX = Math.max.apply({}, atomX) * s,
-                    minX = Math.min.apply({}, atomX) * s,
-                    
-                    maxY = Math.max.apply({}, atomY) * s,
-                    minY = Math.min.apply({}, atomY) * s,
-                    
-                    maxZ = Math.max.apply({}, atomZ) * s,
-                    minZ = Math.min.apply({}, atomZ) * s;
-
-                var dx = -(maxX - minX)/2 - minX;
-                var dy = -(maxY - minY)/2 - minY;
-                var dz = -(maxZ - minZ)/2 - minZ;
-
-                var scaling = Math.min(1, Math.min(screen.width / (maxX-minX), screen.height / (maxY-minY)) * 0.6);
-                moleculeWrapper.css('-webkit-transform', 'scale('+scaling+')');
-                
-                con.css('-webkit-transform', 'translate3d('+dx+'px, '+dy+'px, '+dz+'px)');
-                con.css('-webkit-transform-origin', -dx + 'px ' + -dy + 'px ' + -dz + 'px');
-                
-                // Create bonds
-                var bonds = result.bonds;
-                for (var i = 0, len = bonds.length; i < len; i++) {
-                    var bond = bonds[i];
-                    var a1 = atoms[bond[0]];
-                    var a2 = atoms[bond[1]];
-                    var p1 = {
-                        x: a1[0] * s,
-                        y: a1[1] * s,
-                        z: a1[2] * s
-                    };
-                    var p2 = {
-                        x: a2[0] * s,
-                        y: a2[1] * s,
-                        z: a2[2] * s
-                    };
-                    
-                    var v = {
-                        x: p2.x - p1.x,
-                        y: p2.y - p1.y,
-                        z: p2.z - p1.z
-                    };
-                    var r = Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2) + Math.pow(v.z, 2));
-                    var zRot = Math.atan2(v.y, v.x);
-                    var yRot = -(Math.PI / 2 - Math.acos(v.z / r));
-                    
-                    els.push('<div class="lineWrapper" style="-webkit-transform: translate3d(' + p1.x + 'px, ' + p1.y + 'px, ' + p1.z + 'px);"><div class="lineZ" style="-webkit-transform: rotateZ(' + zRot + 'rad);"><div class="lineY" style="-webkit-transform: rotateY(' + yRot + 'rad);"><div class="line" style="width: '+r+'px;"></div><div class="line" style="width: '+r+'px;"></div></div></div></div>');
-                }
-                con[0].innerHTML = els.join("");
-                
-                var matrix;
-                moleculeWrapper[0].addEventListener('gesturestart', function(e){
-                    var theTransform = window.getComputedStyle(this).webkitTransform;
-                    matrix = new WebKitCSSMatrix(theTransform);
-                }, false)
-                
-                moleculeWrapper[0].addEventListener('gesturechange', function(e){
-                    this.style.webkitTransform = matrix.scale(e.scale);
-                }, false)
-                
-                $('#molecule').empty().append(moleculeWrapper);
-            }
+            CSSMol.init();
         </script>
     </body>
 </html>
