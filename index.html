@@ -23,6 +23,8 @@
             }
             #cssmol * {
                 position: absolute;
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
             }
             
             .rot {
@@ -169,13 +171,18 @@
                         });
                     }).find('option[value=ethanol.pdb]').attr('selected', 'selected').trigger('change');
                     
-                    $('#lightweight').change(function(e){
+                    var lw = $('#lightweight').change(function(e){
                         if($(this).attr('checked')){
                             $('body').addClass('lightweight');
                         } else {
                             $('body').removeClass('lightweight');
                         }                   
                     });
+                    
+                    // Yeak
+                    if(navigator.userAgent.match(/iPod|iPhone/i)){
+                        lw.trigger('click').trigger('change');
+                    }
                 },
                 
                 initEvents: function(){
