@@ -33,9 +33,9 @@
                 left: 50%;
             }
             
-            /*.dragging .rot {
+            .dragging .rot {
                 -webkit-transition: none;
-            }*/
+            }
             
             .atom {
                 -webkit-transform-style: preserve-3d;
@@ -128,6 +128,13 @@
         </div>
         <script type="text/javascript">        
             var CSSMol = {
+                settings: {
+                    renderScale: 100,
+                    defaultDt: 100,
+                    spinSpeed: 100,
+                    confirmItemsAbove: 250    
+                },
+                
                 init: function(){
                     this.initEvents();
                     this.initMenu();
@@ -185,9 +192,11 @@
                 
                 touch: {
                     point: null,
+                    lastPoint: null,
                     at: null,
                     matrix: null,
-                    dragging: false    
+                    dragging: false,
+                    resizing: false    
                 },
                 
                 dom: {
@@ -201,10 +210,16 @@
                         var e = _e.changedTouches ? _e.changedTouches[0] : _e;
                         this.touch.point = {
                             x: e.pageX,
-                            y: e.pageY
-                        };
-                        this.touch.at = +new Date();                      
+                            y: e.pageY,
+                            at: +new Date()
+                        };                  
                         this.touch.matrix = new WebKitCSSMatrix(window.getComputedStyle(this.dom.rot).webkitTransform);
+                        
+                        // Stop it in its tracks
+                        var tmp = window.getComputedStyle(this.dom.rot).webkitTransitionProperty;
+                        this.dom.rot.style.webkitTransform = this.touch.matrix;
+                        this.dom.rot.style.webkitTransitionProperty = tmp;
+                        
                         this.touch.dragging = true;
                         this.dom.$cssmol.addClass('dragging');
                     },
@@ -215,12 +230,13 @@
                             var e = _e.changedTouches ? _e.changedTouches[0] : _e;
                             var point = {
                                 x: e.pageX,
-                                y: e.pageY
+                                y: e.pageY,
+                                at: +new Date()
                             };
-                            var at = +new Date();
                             this.spin(e.pageX - this.touch.point.x, e.pageY - this.touch.point.y);
+                            
+                            this.touch.lastPoint = this.touch.point;
                             this.touch.point = point;
-                            this.touch.at = at;
                         }
                         
                     },
@@ -229,50 +245,36 @@
                         this.touch.dragging = false;
                         this.dom.$cssmol.removeClass('dragging');
                         var e = _e.changedTouches ? _e.changedTouches[0] : _e;
-                        this.spin(e.pageX - this.touch.point.x, e.pageY - this.touch.point.y, +new Date() - this.touch.at);
+                        this.spin(this.touch.point.x - this.touch.lastPoint.x, this.touch.point.y - this.touch.lastPoint.y, this.touch.point.at - this.touch.lastPoint.at);
                     },
-                    
-                    /*var matrix;
-                    moleculeWrapper[0].addEventListener('gesturestart', function(e){
-                        var theTransform = window.getComputedStyle(this).webkitTransform;
-                        matrix = new WebKitCSSMatrix(theTransform);
-                    }, false)
-                    
-                    moleculeWrapper[0].addEventListener('gesturechange', function(e){
-                        
-                    }, false)*/
-                    
+
                     gesturestart: function(){
-                    
+                        this.touch.resizing = true;
+                        this.touch.scaleMatrix = new WebKitCSSMatrix(window.getComputedStyle(this.dom.moleculeWrapper).webkitTransform);
                     },
                     
                     gesturechange: function(e){
-                        //console.log(e.scale);
-                        //this.dom.moleculeWrapper.style.webkitTransform = this.touch.matrix.scale(e.scale);
+                        this.dom.moleculeWrapper.style.webkitTransform = this.touch.scaleMatrix.scale(e.scale);
                     },
                     
-                    gestureend: function(){
-                    
+                    gestureend: function(e){
+                        this.touch.resizing = false;
                     }
                 },
                 
                 spin: function(dx, dy, dt){
-                    //console.log('spinning', dx, dy, dt)
-                    
-                    var s = 100;
-                    var tScale = 10;
-                    var dt = dt ||  100;
+                    var speed = this.settings.spinSpeed;
+                    var dt = dt ||  this.settings.defaultDt;
  
-                    if (this.dom.rot) {
-                        var rotY = Math.min(Math.max(-180, dx / dt * s), 180);
-                        var rotX = Math.min(Math.max(-180, dy / dt * s), 180);
-                        //console.log('rot', rotY, rotX);
+                    if (this.dom.rot && !this.touch.resizing) {
+                        var rotY = Math.min(Math.max(-180, dx / dt * speed), 180);
+                        var rotX = Math.min(Math.max(-180, dy / dt * speed), 180);
                         this.dom.rot.style.webkitTransform = this.touch.matrix = this.touch.matrix.rotate(rotX, rotY, 0);
                     }
                 },
                 
                 render: function(data, type){
-                    var s = 100;
+                    var s = this.settings.renderScale;
                     
                     var typeMap = {
                         sdf: 'sdf',
@@ -280,7 +282,7 @@
                         pdb: 'pdb'
                     };
                     var result = window['parse_' + typeMap[type]](data);
-                    if (result.atoms.length + result.bonds.length > 250) {
+                    if (result.atoms.length + result.bonds.length > this.settings.confirmItemsAbove) {
                         if (!confirm("This molecule consists of " + result.atoms.length + " atoms and " + result.bonds.length + " bonds. This might be really slow to render on small device!")) {
                             return;
                         }
