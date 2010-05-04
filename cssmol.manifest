@@ -1,18 +1,15 @@
 CACHE MANIFEST
-# CSSMol manifest, version 0.1
+# CSSMol manifest, version 0.2.3
 
 # HTML
 index.html
 
 # MOLECULES
-/proxy.php
+data/ethanol.pdb
 
 # JS
-http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js
-canvasmol.js
+jquery-1.4.2.min.js
 
 # PICS
 Icon_CSSMol.png
 Default_CSSMol.png
-
-NETWORK:
