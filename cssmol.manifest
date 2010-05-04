@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# CSSMol manifest, version 0.2.3
+# CSSMol manifest, version 0.2.8
 
 # HTML
 index.html
@@ -8,7 +8,7 @@ index.html
 data/ethanol.pdb
 
 # JS
-jquery-1.4.2.min.js
+xui-custom-1.0.0.min.js
 
 # PICS
 Icon_CSSMol.png

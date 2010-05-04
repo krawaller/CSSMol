@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html manifest="cssmol.manifest">
+<html>
     <head>
         <meta http-equiv="content-type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width; minimum-scale=1.0; maximum-scale=1.0; initial-scale=1.0"/>
@@ -9,7 +9,25 @@
         <meta name="apple-mobile-web-app-capable" content="yes"/>
         
         <title>CSSMol</title>
-        <script type="text/javascript" src="jquery-1.4.2.min.js"></script>
+        <script type="text/javascript" src="xui-custom-1.0.0.min.js"></script>
+        <script type="text/javascript">
+            $ = xui;
+            xui.fn.appendTo = function(to){
+                return this.each(function(el){
+                    to[0].appendChild(el);
+                });
+            };
+            
+            xui.fn.empty = function(){
+                for (var i = 0, elem; (elem = this[i]) != null; i++) {
+                    while (elem.firstChild) {
+                        elem.removeChild(elem.firstChild);
+                    }
+                }
+                return this;
+            };
+                
+        </script>
         <style type="text/css">
             
             html, body, #cssmol, .wrapper {
@@ -126,7 +144,7 @@
         <div id="settings">
             <div id="menu"></div>
             <label for="threed">
-                3dify:
+                7dify:
             </label>
             <input type="checkbox" id="threed" name="threed" />
             <label for="gradient">
@@ -212,22 +230,24 @@
                             optGroup = $('<optgroup/>').attr('label', mol).appendTo(select);
                         }
                         else {
-                            optGroup.append($('<option/>').val(menu[mol]).text(mol));
+                            optGroup[0].appendChild($('<option/>').attr('value', menu[mol]).html(mol)[0]);
                         }
                     }
                     select.appendTo($('#menu'));
-                    select.change(function(e){
-                        var moleculeFile = $(this).val(), type = moleculeFile.match(/\.(\w+)$/)[1];
+                    select.on('change', function(e){ 
+                        var moleculeFile = $(this).find('option')[this.selectedIndex].getAttribute('value'), 
+                            type = moleculeFile.match(/\.(\w+)$/)[1];
                         
-                        $.ajax({
-                            url: 'data/' + moleculeFile,
-                            success: function(data){
-                                self.render(data, type);
+                        
+                        $.fn.xhr('data/' + moleculeFile, {
+                            callback: function(data){
+                                self.render(this.responseText, type);
                             }
                         });
-                    }).find('option[value=ethanol.pdb]').attr('selected', 'selected').trigger('change');
+                    }).find('option').filter(function(){ return this.value == 'ethanol.pdb' }).attr('selected', 'selected');
+                    select.fire('change');
                     
-                    $('#threed').change(function(e){
+                    $('#threed').on('change', function(e){
                         if($(this).attr('checked')){
                             $('body').addClass('threed');
                         } else {
@@ -235,7 +255,7 @@
                         }                   
                     });
                     
-                    $('#gradient').change(function(e){
+                    $('#gradient').on('change', function(e){
                         if($(this).attr('checked')){
                             $('body').addClass('gradient');
                         } else {
@@ -361,7 +381,7 @@
                     this.dom.moleculeWrapper = moleculeWrapper[0];
                     var con = $('<div/>').addClass('rot');
                     this.dom.rot = con[0];
-                    moleculeWrapper.append(con);
+                    moleculeWrapper[0].appendChild(con[0]);
                     
                     
                     var atomX = [],
@@ -427,7 +447,7 @@
                         els.push('<div class="lineWrapper" style="-webkit-transform: translate3d(' + p1.x + 'px, ' + p1.y + 'px, ' + p1.z + 'px);"><div class="lineZ" style="-webkit-transform: rotateZ(' + zRot + 'rad);"><div class="lineY" style="-webkit-transform: rotateY(' + yRot + 'rad);"><div class="line" style="width: '+r+'px;"></div><div class="line" style="width: '+r+'px;"></div></div></div></div>');
                     }
                     con[0].innerHTML = els.join("");
-                    $('#cssmol').empty().append(moleculeWrapper);
+                    $('#cssmol').empty()[0].appendChild(moleculeWrapper[0]);
                 },
                 
                 utils: {
