@@ -4,14 +4,14 @@
         <meta http-equiv="content-type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width; minimum-scale=1.0; maximum-scale=1.0; initial-scale=1.0"/>
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
-        <link rel="apple-touch-icon" href="Icon_CSSMol.png" />
-        <link rel="apple-touch-startup-image" href="Default_CSSMol.png" />
+        <link rel="apple-touch-icon" href="Icon.png" />
+        <link rel="apple-touch-startup-image" href="Default.png" />
         <meta name="apple-mobile-web-app-capable" content="yes"/>
         
         <title>CSSMol</title>
-        <script type="text/javascript" src="xui-custom-1.0.0.min.js"></script>
+        <script type="text/javascript" src="xui-custom-1.0.0.js"></script>
         <script type="text/javascript">
-            $ = xui;
+            window.$ = window.xui;
             xui.fn.appendTo = function(to){
                 return this.each(function(el){
                     to[0].appendChild(el);
@@ -36,6 +36,8 @@
                 background: #000;
                 margin: 0;
                 padding: 0;
+                color: #fff;
+                font-family: Helvetica, sans-serif;
             }
             #cssmol * {
                 position: absolute;
@@ -137,6 +139,23 @@
             .gradient .atom div {
                 background-image: -webkit-gradient( radial, 20 20, 20, 0 0, 10, from(rgba(0,0,0,0.2)), to(rgba(255,255,255,0.5)) ); 
             }
+            
+            #about {
+                position: absolute;
+                bottom: 0;
+                width: 100%;
+            }
+            
+            a {
+                color: #23aaff;
+                text-decoration: none;
+            }
+            
+            p {
+                margin: 0.2em;
+                width: 100%;
+                text-align: center;
+            }
         </style>
     </head>
     <body>
@@ -144,7 +163,7 @@
         <div id="settings">
             <div id="menu"></div>
             <label for="threed">
-                7dify:
+                3dify:
             </label>
             <input type="checkbox" id="threed" name="threed" />
             <label for="gradient">
@@ -152,6 +171,7 @@
             </label>
             <input type="checkbox" id="gradient" name="gradient" />
         </div>
+        <div id="about"><p><a href="http://blog.krawaller.se/github">Behind the scenes</a> and the <a href="http://alteredqualia.com/canvasmol/">original idea</a></p></div>
         <script type="text/javascript">        
             var CSSMol = {
                 settings: {
@@ -236,14 +256,15 @@
                     select.appendTo($('#menu'));
                     select.on('change', function(e){ 
                         var moleculeFile = $(this).find('option')[this.selectedIndex].getAttribute('value'), 
-                            type = moleculeFile.match(/\.(\w+)$/)[1];
+                            type = moleculeFile.match(/\.(\w+)$/)[1],
+                            xhr = new XMLHttpRequest();
+                            
+                        xhr.onload = function(){
+                            self.render(this.responseText, type);
+                        };
+                        xhr.open("GET", 'data/' + moleculeFile);
+                        xhr.send();
                         
-                        
-                        $.fn.xhr('data/' + moleculeFile, {
-                            callback: function(data){
-                                self.render(this.responseText, type);
-                            }
-                        });
                     }).find('option').filter(function(){ return this.value == 'ethanol.pdb' }).attr('selected', 'selected');
                     select.fire('change');
                     

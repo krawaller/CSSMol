@@ -1,15 +1,19 @@
 CACHE MANIFEST
-# CSSMol manifest, version 0.2.8
+# CSSMol manifest, version 0.4.0
 
 # HTML
 index.html
+cssmol.manifest
 
 # MOLECULES
 data/ethanol.pdb
 
 # JS
-xui-custom-1.0.0.min.js
+xui-custom-1.0.0.js
 
 # PICS
-Icon_CSSMol.png
-Default_CSSMol.png
+Icon.png
+Default.png
+
+NETWORK:
+data/
