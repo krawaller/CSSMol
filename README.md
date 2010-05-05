@@ -3,7 +3,12 @@ CSSMol
 
 A port of the excellent [CanvasMol](http://alteredqualia.com/canvasmol/) from canvas to CSS 3D Transforms.
 
-Why would anyone do that, you ask?
+For everyone who is overly impatient: [demo](http://79.99.1.153/cssmol/)
+Try running it on your iPhone / iPad and add it to your homescreen.
+You can also try it out in Safari 4 / Webkit nightly (on Mac at least).
+
+
+Why would anyone do this, you ask?
 Well, we needed an excuse to play with the cutting edge CSS 3D Transforms, so why not?
 Mind the cutting edge-ness though - this is so new that probably only Mobile Safari, Safari 4 and Webkit Nightly supports it.
 So why do it then? Well, because Mobile Safari has hardware accelerated CSS Transforms - meaning we can get decent performance even on a small weak device as the iPhone.
