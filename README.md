@@ -2,6 +2,8 @@ CSSMol
 ===
 
 A port of the excellent [CanvasMol](http://alteredqualia.com/canvasmol/) from canvas to CSS 3D Transforms.
+Please do notice that Branislav of [alteredqualia](http://alteredqualia.com/canvasmol/) is the real brainy workhorse behind this - we've only ported it and put on some lipstick, though the spherical coordinates did take some repetition of our linear algebra skills.
+The molecules at display are publicly availble and originate from PDB and Pubchem.
 
 For everyone who is overly impatient: [demo](http://79.99.1.153/cssmol/)
 Try running it on your iPhone / iPad and add it to your homescreen.
